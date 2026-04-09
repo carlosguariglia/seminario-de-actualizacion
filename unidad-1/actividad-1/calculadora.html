@@ -4,6 +4,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora</title>
     <style>
+        table, tr, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
         input[type="button"] {
             width: 100%;
         }
@@ -15,7 +19,7 @@
     </style>
 
     <script>
-        <!-- JavaScript para manejar la lógica de la calculadora by Github Copilot -->
+        /* JavaScript para manejar la lógica de la calculadora by Github Copilot */
 
         document.addEventListener('DOMContentLoaded', function() {
             const display = document.getElementById('display');
@@ -52,8 +56,9 @@
     <h1>Calculadora</h1>
     <table>
         <tr>
-            <td colspan="4"><input type="text" id="display" readonly></td>
+            <td colspan="4"> <input type="text" id="display" readonly></td>  
         </tr>
+
         <tr>
             <td><input type="button" value="7" class="boton-azul"></td>
             <td><input type="button" value="8" class="boton-azul"></td>
@@ -82,4 +87,8 @@
             <td colspan="4"><input type="button" value="Borrar" class="boton-borrar"></td>
         </tr>
     </table>
+
+    </body>
+
+</html>
     

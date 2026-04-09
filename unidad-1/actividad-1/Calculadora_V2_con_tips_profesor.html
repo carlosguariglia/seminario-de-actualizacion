@@ -1,0 +1,137 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <style>
+        table, tr, td {
+            margin: auto;
+            border: 1px solid white;
+            border-collapse: collapse;
+
+        }
+        /* Centrar el título de la calculadora */
+        h1 { text-align: center; } 
+        
+                
+        .boton-borrar { background: #ef4444; color: white; width: 100% }
+        .boton-azul { background: #3b82f6; color: white; width: 100% }
+        .boton-verde { background: #10b981; color: white; width: 100% }
+        .boton-naranja { background: #f59e0b; color: white; width: 100% }
+    </style>
+</head>
+
+
+
+<body>
+    <h1>Calculadora</h1>
+    <table>
+        <tr>
+            <td colspan="4"> <input type="text" id="display" readonly></td>  
+        </tr>
+
+        <tr>
+            <td><button id="btn7" class="boton-azul">7</button></td>
+            <td><button id="btn8" class="boton-azul">8</button></td>
+            <td><button id="btn9" class="boton-azul">9</button></td>
+            <td><button id="btnPlus" class="boton-verde">+</button></td>
+        </tr>
+        <tr>
+            <td><button id="btn4" class="boton-azul">4</button></td>
+            <td><button id="btn5" class="boton-azul">5</button></td>
+            <td><button id="btn6" class="boton-azul">6</button></td>
+            <td><button id="btnMinus" class="boton-verde">-</button></td>
+        </tr>
+        <tr>
+            <td><button id="btn3" class="boton-azul">3</button></td>
+            <td><button id="btn2" class="boton-azul">2</button></td>
+            <td><button id="btn1" class="boton-azul">1</button></td>
+            <td><button id="btnMult" class="boton-verde">*</button></td>
+        </tr>
+        <tr>
+            <td><button id="btn0" class="boton-azul">0</button></td>
+            <td><button id="btnDot" class="boton-azul">.</button></td>
+            <td><button id="btnResult" class="boton-naranja">=</button></td>
+            <td><button id="btnDiv" class="boton-verde">/</button></td>
+        </tr>
+        <tr>
+            <td colspan="4"><button id="btnDelete" class="boton-borrar">Borrar</button></td>
+        </tr>
+    </table>
+    
+</body> 
+
+<script type="text/javascript">
+
+function onBtn0Click() {
+    display.value += '0'; }
+function onBtn1Click() {
+    display.value += '1'; }
+function onBtn2Click() {
+    display.value += '2'; }
+function onBtn3Click() {
+    display.value += '3'; }
+function onBtn4Click() {
+    display.value += '4'; }
+function onBtn5Click() {
+    display.value += '5'; }
+function onBtn6Click() {
+    display.value += '6'; }   
+function onBtn7Click() {
+    display.value += '7'; }
+function onBtn8Click() {
+    display.value += '8'; }
+function onBtn9Click() {
+    display.value += '9'; }
+
+function onBtnplusClick() {
+    display.value += '+'; }
+function onBtnminusClick() {
+    display.value += '-'; }
+function onBtnmultClick() {
+    display.value += '*'; }
+function onBtndivClick() {
+    display.value += '/'; }
+function onBtndotClick() {
+    display.value += '.'; }
+function onBtnDeleteClick() {
+    display.value = ''; }
+
+function onBtnResultClick()
+{
+    display.value = eval(display.value);
+}
+
+
+
+function main()
+{
+   // Botones numericos
+    btn0.onclick = onBtn0Click;
+    btn1.onclick = onBtn1Click;
+    btn2.onclick = onBtn2Click;
+    btn3.onclick = onBtn3Click;
+    btn4.onclick = onBtn4Click;
+    btn5.onclick = onBtn5Click;
+    btn6.onclick = onBtn6Click;
+    btn7.onclick = onBtn7Click;
+    btn8.onclick = onBtn8Click;
+    btn9.onclick = onBtn9Click;
+
+    // Botones de operaciones
+
+    btnPlus.onclick = onBtnplusClick;
+    btnMinus.onclick = onBtnminusClick;
+    btnMult.onclick = onBtnmultClick;
+    btnDiv.onclick = onBtndivClick;
+    btnDot.onclick = onBtndotClick;
+    btnResult.onclick = onBtnResultClick;
+    btnDelete.onclick = onBtnDeleteClick;
+
+}
+
+window.onload = main;
+
+</script>
+
+</html>
