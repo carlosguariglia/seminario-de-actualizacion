@@ -1,0 +1,324 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <style>
+        table, tr, td {
+            margin: auto;
+            border: 1px solid white;
+            border-collapse: collapse;
+
+        }
+        /* Centrar el título de la calculadora */
+        h1 { text-align: center; } 
+        
+                
+        .boton-borrar { background: #ef4444; color: white; width: 100% }
+        .boton-azul { background: #3b82f6; color: white; width: 100% }
+        .boton-verde { background: #10b981; color: white; width: 100% }
+        .boton-naranja { background: #f59e0b; color: white; width: 100% }
+    </style>
+</head>
+
+
+
+<body>
+    <h1>Calculadora</h1>
+    <!-- <table> 
+        <tr>
+            <td colspan="4"> <input type="text" id="display" readonly></td>  
+        </tr>
+
+        <tr>
+            <td><button id="btn7" class="boton-azul">7</button></td>
+            <td><button id="btn8" class="boton-azul">8</button></td>
+            <td><button id="btn9" class="boton-azul">9</button></td>
+            <td><button id="btnPlus" class="boton-verde">+</button></td>
+        </tr>
+        <tr>
+            <td><button id="btn4" class="boton-azul">4</button></td>
+            <td><button id="btn5" class="boton-azul">5</button></td>
+            <td><button id="btn6" class="boton-azul">6</button></td>
+            <td><button id="btnMinus" class="boton-verde">-</button></td>
+        </tr>
+        <tr>
+            <td><button id="btn3" class="boton-azul">3</button></td>
+            <td><button id="btn2" class="boton-azul">2</button></td>
+            <td><button id="btn1" class="boton-azul">1</button></td>
+            <td><button id="btnMult" class="boton-verde">*</button></td>
+        </tr>
+        <tr>
+            <td><button id="btn0" class="boton-azul">0</button></td>
+            <td><button id="btnDot" class="boton-azul">.</button></td>
+            <td><button id="btnResult" class="boton-naranja">=</button></td>
+            <td><button id="btnDiv" class="boton-verde">/</button></td>
+        </tr>
+        <tr>
+            <td colspan="4"><button id="btnDelete" class="boton-borrar">Borrar</button></td>
+        </tr>
+    </table>
+    -->
+</body> 
+
+
+
+<script>
+
+class Calculator extends HTMLElement
+{
+    constructor()
+    {
+        // Llamar al constructor de la clase padre (HTMLElement)
+        super();
+        // Crear los elementos de la calculadora
+        this.display = document.createElement('input');
+        this.btn0 = document.createElement('button');
+        this.btn1 = document.createElement('button');
+        this.btn2 = document.createElement('button');
+        this.btn3 = document.createElement('button');
+        this.btn4 = document.createElement('button');
+        this.btn5 = document.createElement('button');
+        this.btn6 = document.createElement('button');
+        this.btn7 = document.createElement('button');
+        this.btn8 = document.createElement('button');
+        this.btn9 = document.createElement('button');
+        this.btnPlus = document.createElement('button');
+        this.btnMinus = document.createElement('button');
+        this.btnMult = document.createElement('button');
+        this.btnDiv = document.createElement('button');
+        this.btnDot = document.createElement('button');
+        this.btnResult = document.createElement('button');
+        this.btnDelete = document.createElement('button');
+
+        this.table = document.createElement('table');
+
+        // Preparacion de las instancias
+        
+        this.display.type = 'text';
+        this.display.readOnly = true;
+        this.display.value = '0';
+        
+
+        this.btn0.className = 'boton-azul';
+        this.btn0.innerText = '0';
+        
+        this.btn1.className = 'boton-azul';
+        this.btn1.innerText = '1';
+        
+        this.btn2.className = 'boton-azul';
+        this.btn2.innerText = '2';
+        this.btn2.value = '2';
+
+        this.btn3.className = 'boton-azul';
+        this.btn3.innerText = '3';
+        this.btn3.value = '3';
+        
+        this.btn4.className = 'boton-azul';
+        this.btn4.innerText = '4';
+        this.btn4.value = '4';
+
+        this.btn5.className = 'boton-azul';
+        this.btn5.innerText = '5';
+        this.btn5.value = '5';
+        
+        this.btn6.className = 'boton-azul';
+        this.btn6.innerText = '6';
+        this.btn6.value = '6';
+
+        this.btn7.className = 'boton-azul';
+        this.btn7.innerText = '7';
+        this.btn7.value = '7';
+        
+        this.btn8.className = 'boton-azul';
+        this.btn8.innerText = '8';
+        this.btn8.value = '8';
+
+        this.btn9.className = 'boton-azul';
+        this.btn9.innerText = '9';
+        this.btn9.value = '9';
+        
+        this.btnPlus.className = 'boton-verde';
+        this.btnPlus.innerText = '+';
+        this.btnPlus.value = '+';
+
+        this.btnMinus.className = 'boton-verde';
+        this.btnMinus.innerText = '-';
+        this.btnMinus.value = '-';
+
+        this.btnMult.className = 'boton-verde';
+        this.btnMult.innerText = '*';   
+        this.btnMult.value = '*';
+
+        this.btnDiv.className = 'boton-verde';
+        this.btnDiv.innerText = '/';
+        this.btnDiv.value = '/';
+
+        this.btnDot.className = 'boton-azul';
+        this.btnDot.innerText = '.';    
+        this.btnDot.value = '.';
+
+        this.btnResult.className = 'boton-naranja';
+        this.btnResult.innerText = '=';
+        this.btnResult.value = '=';
+
+        this.btnDelete.className = 'boton-borrar';
+        this.btnDelete.innerText = 'Borrar';
+        this.btnDelete.value = 'Borrar';
+
+        // Agregar los elementos al DOM
+        this.appendChild(this.display);
+        this.appendChild(this.btn0);
+        this.appendChild(this.btn1);
+        this.appendChild(this.btn2);
+        this.appendChild(this.btn3);
+        this.appendChild(this.btn4);
+        this.appendChild(this.btn5);
+        this.appendChild(this.btn6);
+        this.appendChild(this.btn7);
+        this.appendChild(this.btn8);
+        this.appendChild(this.btn9);
+        this.appendChild(this.btnPlus);
+        this.appendChild(this.btnMinus);
+        this.appendChild(this.btnMult);
+        this.appendChild(this.btnDiv);
+        this.appendChild(this.btnDot);
+        this.appendChild(this.btnResult);
+        this.appendChild(this.btnDelete);
+
+        this.appendChild(this.table);
+
+    }
+
+    onbtn0Click() {
+                    this.display.value += '0'; }
+    onbtn1Click() {
+                    this.display.value += '1'; }
+    onbtn2Click() {
+                    this.display.value += '2'; }
+    onbtn3Click() {
+                    this.display.value += '3'; }
+    onbtn4Click() {
+                    this.display.value += '4'; }
+    onbtn5Click() {
+                    this.display.value += '5'; }
+    onbtn6Click() {
+                    this.display.value += '6'; }
+    onbtn7Click() {
+                    this.display.value += '7'; }
+    onbtn8Click() {
+                    this.display.value += '8'; }
+    onbtn9Click() {
+                    this.display.value += '9'; }
+
+    onbtnplusClick() {
+                    this.display.value += '+'; }
+    onbtnminusClick() {
+                    this.display.value += '-'; }
+    onbtnmultClick() {
+                    this.display.value += '*'; }
+    onbtndivClick() {
+                    this.display.value += '/'; }
+    onbtndotClick() {
+                    this.display.value += '.'; }
+    onbtnDeleteClick() {
+                    this.display.value = ''; }
+    onbtnResultClick()
+    {
+        this.display.value = eval(this.display.value);
+    }
+
+    connectedCallback()
+    {
+        // Botones numericos
+        this.btn0.onclick = this.onbtn0Click;
+        this.btn1.onclick = this.onbtn1Click;
+        this.btn2.onclick = this.onbtn2Click;
+        this.btn3.onclick = this.onbtn3Click;
+        this.btn4.onclick = this.onbtn4Click;
+        this.btn5.onclick = this.onbtn5Click;
+        this.btn6.onclick = this.onbtn6Click;
+        this.btn7.onclick = this.onbtn7Click;
+        this.btn8.onclick = this.onbtn8Click;
+        this.btn9.onclick = this.onbtn9Click;
+
+        // Botones de operaciones
+
+        this.btnPlus.onclick = this.onbtnplusClick;
+        this.btnMinus.onclick = this.onbtnminusClick;
+        this.btnMult.onclick = this.onbtnmultClick;
+        this.btnDiv.onclick = this.onbtndivClick;
+        this.btnDot.onclick = this.onbtndotClick;
+        this.btnResult.onclick = this.onbtnResultClick;
+        this.btnDelete.onclick = this.onbtnDeleteClick;
+
+    }
+
+    disconnectCallback()
+    {
+        // Botones numericos
+        this.btn0.onclick = null;
+        this.btn1.onclick = null;
+        this.btn2.onclick = null;
+        this.btn3.onclick = null;
+        this.btn4.onclick = null;
+        this.btn5.onclick = null;
+        this.btn6.onclick = null;
+        this.btn7.onclick = null;
+        this.btn8.onclick = null;
+        this.btn9.onclick = null;
+
+        // Botones de operaciones
+
+        this.btnPlus.onclick = null;
+        this.btnMinus.onclick = null;
+        this.btnMult.onclick = null;
+        this.btnDiv.onclick = null;
+        this.btnDot.onclick = null;
+        this.btnResult.onclick = null;
+        this.btnDelete.onclick = null;
+
+    }
+}
+
+customElements.define('x-calculator', Calculator);
+
+function tableCreate()
+{
+    let body = document.getElementsByTagName('body');
+    let table = document.createElement('table');
+    
+    table.style.width = '100%';
+    table.setAttribute('border', '1');
+
+    let tbody = document.createElement('tbody');
+
+    for (let i = 0; i < 5; i++)
+    {
+        let tr = document.createElement('tr');
+        tbody.appendChild(tr);
+        for (let j = 0; j < 4; j++)
+        {
+            let td = document.createElement('td');
+            td.appendChild(document.createTextNode(`Row-${i} Column-${j}`));
+            tr.appendChild(td);
+        }
+    tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    body.appendChild(table);
+}
+
+
+function main()
+{
+    let myCustomCalculator = new Calculator();
+    document.body.appendChild(myCustomCalculator);
+    tableCreate();
+}
+
+window.onload = main;
+
+</script>
+
+</html>

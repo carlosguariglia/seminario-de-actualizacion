@@ -1,0 +1,11 @@
+Contenidos a trabajar: Frontend (HTML, CSS y JS)
+Modalidad: Individual
+Formato de entrega: Repositorios GitHub carpeta "unidad-1/actividad-2"
+
+Consigna
+
+A partir del código desarrollado en la actividad 1 y el ejemplo desarrollado en clases. Migrar el planteo desarrollado hacia la abstracción propuesta como WebComponents (Derivación de HTMLElement). En caso de no contar con la resolución anterior, utilizar la plantilla trabajada en clases para su resolución.
+
+Requisitos
+La calculadora conservar la funcionalidad
+La clase debe implementar la interfaz mínima de WebComponents.
