@@ -1,1 +1,0 @@
-A partir de la version "HTML" de la calculadora, diseñar una version progamada en Javascript
