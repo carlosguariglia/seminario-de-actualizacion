@@ -68,7 +68,7 @@
 class Calculator extends HTMLElement
 {
     constructor()
-    {
+    {   
         // Llamar al constructor de la clase padre (HTMLElement)
         super();
         // Crear los elementos de la calculadora
@@ -92,6 +92,46 @@ class Calculator extends HTMLElement
         this.btnDelete = document.createElement('button');
 
         this.table = document.createElement('table');
+
+        let row0 = this.table.insertRow();
+        let col0 = row0.insertCell();
+        col0.colSpan = 4;
+        col0.appendChild(this.btnDelete);    
+
+
+        let row1 = this.table.insertRow();
+        let col1 = row1.insertCell();
+        col1.appendChild(this.btn0);
+        let col2 = row1.insertCell();
+        col2.appendChild(this.btnDot);
+        let col3 = row1.insertCell();
+        col3.appendChild(this.btnResult);
+        let col4 = row1.insertCell();
+        col4.appendChild(this.btnDiv);
+
+        let row2 = this.table.insertRow();
+        let col5 = row2.insertCell();
+        col5.appendChild(this.btn3);
+        let col6 = row2.insertCell();
+        col6.appendChild(this.btn2);
+        let col7 = row2.insertCell();
+        col7.appendChild(this.btn1);
+        let col8 = row2.insertCell();
+        col8.appendChild(this.btnMult);
+
+        let row3 = this.table.insertRow();
+        let col9 = row3.insertCell();
+        col9.appendChild(this.btn4);
+        let col10 = row3.insertCell();
+        col10.appendChild(this.btn5);
+        let col11 = row3.insertCell();
+        col11.appendChild(this.btn6);
+        let col12 = row3.insertCell();
+        col12.appendChild(this.btnMinus);
+
+        let row4 = this.table.insertRow();
+        let col13 = row4.insertCell();
+        col13.appendChild(this.display);
 
         // Preparacion de las instancias
         
@@ -165,6 +205,8 @@ class Calculator extends HTMLElement
         this.btnDelete.className = 'boton-borrar';
         this.btnDelete.innerText = 'Borrar';
         this.btnDelete.value = 'Borrar';
+
+    
 
         // Agregar los elementos al DOM
         this.appendChild(this.display);
@@ -284,39 +326,11 @@ class Calculator extends HTMLElement
 customElements.define('x-calculator', Calculator);
 
 
-/* Ejemplo sacado de https://www.w3schools.com pero no funciona */
-function tableCreate()
-{
-    let body = document.getElementsByTagName('body');
-    let table = document.createElement('table');
-    
-    table.style.width = '100%';
-    table.setAttribute('border', '1');
-
-    let tbody = document.createElement('tbody');
-
-    for (let i = 0; i < 5; i++)
-    {
-        let tr = document.createElement('tr');
-        tbody.appendChild(tr);
-        for (let j = 0; j < 4; j++)
-        {
-            let td = document.createElement('td');
-            td.appendChild(document.createTextNode(`Row-${i} Column-${j}`));
-            tr.appendChild(td);
-        }
-    tbody.appendChild(tr);
-    }
-    table.appendChild(tbody);
-    body.appendChild(table);
-}
-
-
 function main()
 {
     let myCustomCalculator = new Calculator();
     document.body.appendChild(myCustomCalculator);
-    tableCreate();
+    
 }
 
 window.onload = main;
