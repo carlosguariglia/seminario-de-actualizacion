@@ -28,6 +28,24 @@ Cada error deberá incluir el número de reintentos.
 
 <script>
 
+function esFormatoValido(fecha) {    
+        // chequea que el formato sea 2 numeros / 2 numeros / 4 numeros
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(fecha)) return false;
+        
+        // usando el consrtructor DATE se chequea que sea una fecha valida
+        let prueba = new Date(fecha);
+        if (prueba.toDateString() === 'Invalid Date') return false;
+        
+        // se crea una fecha de hoy y se compara con la fecha ingresada para evitar fechas futuras
+        
+        let hoy = Date.now();
+        
+
+        if (prueba > hoy) return false; // no puede ser una fecha futura
+        return true;
+}
+
+
 class ValidadorFecha extends HTMLElement
 {
     constructor()
@@ -50,7 +68,7 @@ class ValidadorFecha extends HTMLElement
         // Preparacion de las instancias
         this.displayfecha.type = 'text';
         this.btnvalidar.innerText = 'Validar Fecha';
-        this.displayintentos.type = 'number';
+        this.displayintentos.type = 'text';
         this.displayintentos.readOnly = true;
         this.displayintentos.value = 0;
         this.labelcantidadintentos.innerText = 'Cantidad de Intentos: ';
@@ -65,35 +83,24 @@ class ValidadorFecha extends HTMLElement
         this.appendChild(this.displayintentos);
     }
 
+    
+
     onbtnvalidarClick() {
         let fecha = this.displayfecha.value;
         let intentos = parseInt(this.displayintentos.value, 10) || 0;
 
-        if (this.esFechaValida(fecha)) {
-            alert('Fecha válida: ' + fecha);
-            this.displayintentos.value = 0;
-        } else {
+        if (!esFormatoValido(fecha))
+        {
             intentos++;
             this.displayintentos.value = intentos;
-            alert(`Fecha inválida.\nVuelva a ingresar una fecha Valida.\nDebe ser en el formato DD/MM/YYYY\nIntento ${intentos}.`);
+            alert(`Fecha inválida.\nVuelva a ingresar una fecha Valida.\nDebe ser en el formato DD/MM/YYYY\nNo debe ser una fecha futura\nIntento ${intentos}.`);
+        } else {
+            alert('Fecha válida: ' + fecha);
+            this.displayintentos.value = 0;
         }
     }
 
-    esFechaValida(fecha)
-    {
-        const re = /^\s*(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(\d{4})\s*$/;
-        if (!re.test(fecha)) return false;
-
-        const [, dd, mm, yyyy] = fecha.match(re);
-        const d = parseInt(dd, 10);
-        const m = parseInt(mm, 10);
-        const y = parseInt(yyyy, 10);
-
-        const esBisiesto = (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0));
-        const diasPorMes = [31, esBisiesto ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-        return d >= 1 && d <= diasPorMes[m - 1];
-    }
+  
 
     connectedCallback()
     {
@@ -108,6 +115,8 @@ class ValidadorFecha extends HTMLElement
 
 
 customElements.define('x-validadorfecha', ValidadorFecha);
+
+
 
 
 function main()

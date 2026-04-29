@@ -1,0 +1,231 @@
+<!-- 3. Observe la imagen adjuntada "ejercicio_3_equalizer". Construya el WebComponent 
+correspondiente. Considere que el WebComponent internamente contiene una propiedad 
+que se trata de un objeto de datos que posee toda la información representada en la
+imagen. El WebComponent debe tener un método llamado  getData para obtener dichos 
+datos y setData para asignarlos. El método setData debe aplicar instantánteamente 
+las modificaciones visuales.
+-->
+
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphic EQ</title>
+    <style>
+        table, tr, td {
+            margin: auto;
+            border: 1px solid white;
+            border-collapse: collapse;
+
+        }
+        /* Centrar el título de la calculadora */
+        h1 { text-align: center; } 
+        
+                
+        .boton-borrar { background: #ef4444; color: white; width: 100% }
+        .boton-azul { background: #3b82f6; color: white; width: 100% }
+        .boton-verde { background: #10b981; color: white; width: 100% }
+        .boton-naranja { background: #f59e0b; color: white; width: 100% }
+    </style>
+</head>
+
+
+
+<body>
+
+</body> 
+
+
+
+<script>
+
+class Equalizer extends HTMLElement
+{
+    constructor()
+    {   
+        // Llamar al constructor de la clase padre (HTMLElement)
+        super();
+
+        // TODO:  aca deberia ir la creacion de la estructura de datos que 
+        // representaran las frecuencias y sus valores.
+        this.data = {
+            '32hz': 0,
+            '64hz': 0,
+            '130hz': 0,
+            '260hz': 0,
+            '500hz': 0,
+            '1k': 0,
+            '2k': 0,
+            '4k': 0,
+            '8.3k': 0,
+            '16.5k': 0
+        };
+
+
+        // Crear el título de la calculadora (aca se crea el titulo que estaba en H1)
+        this.uptitle = document.createElement('h1');
+        this.uptitle.innerText = 'Graphic EQ';
+
+
+        // Crear los elementos de la calculadora
+        this.display = document.createElement('input');
+        this.btnGuardar = document.createElement('button');
+        this.btnX = document.createElement('button');
+        this.btnOk = document.createElement('button');
+        this.btnCancel = document.createElement('button');
+        this.btnAudition = document.createElement('button');
+        this.btnHelp = document.createElement('button');
+        this.sld32hz = document.createElement('slider');
+        this.sld64hz = document.createElement('slider');
+        this.sld130hz = document.createElement('slider');
+        this.sld260hz = document.createElement('slider');
+        this.sld500hz = document.createElement('slider');
+        this.sld1k = document.createElement('slider');
+        this.sld2k = document.createElement('slider');
+        this.sld4k = document.createElement('slider');
+        this.sld8dot3k = document.createElement('slider');
+        this.sld16dot5k = document.createElement('ranger');
+        
+
+
+        // armado de la tabla que servira de estructura para la calculadora
+        this.table = document.createElement('table');
+
+        let row0 = this.table.insertRow();
+        let col0 = row0.insertCell();
+        //col0.colSpan = 4;
+        col0.appendChild(this.display);    
+
+
+        let row1 = this.table.insertRow();
+        let col1 = row1.insertCell();
+        col1.appendChild(this.sld32hz);
+        let col2 = row1.insertCell();
+        col2.appendChild(this.sld64hz);
+        let col3 = row1.insertCell();
+        col3.appendChild(this.sld130hz);
+        let col4 = row1.insertCell();
+        col4.appendChild(this.sld260hz);
+
+        let col5 = row1.insertCell();
+        col5.appendChild(this.sld500hz);
+        let col6 = row1.insertCell();
+        col6.appendChild(this.sld1k);
+        let col7 = row1.insertCell();
+        col7.appendChild(this.sld2k);
+        let col8 = row1.insertCell();
+        col8.appendChild(this.sld4k);
+
+        let col9 = row1.insertCell();
+        col9.appendChild(this.sld8dot3k);
+        let col10 = row1.insertCell();
+        col10.appendChild(this.sld16dot5k);
+        
+        
+        let col17 = row1.insertCell();
+        col17.appendChild(this.btnOk);
+        let col18 = row1.insertCell();
+        col18.appendChild(this.btnCancel);
+        let col19 = row1.insertCell();
+        col19.appendChild(this.btnAudition);
+        let col20 = row1.insertCell();
+        col20.appendChild(this.btnHelp);
+        
+        // Preparacion de las instancias
+        
+        this.display.type = '';
+        this.display.readOnly = true;
+        this.display.style.textAlign = 'right';
+        this.display.value = '';
+        
+
+        
+        // Agregar los elementos al DOM  (DOM = arbol de objetos)
+        
+        // aca se agrega el titulo
+        this.appendChild(this.uptitle);
+        this.appendChild(this.table);
+
+    }
+
+// TODO: metodo GETDATA y SETDATA
+
+
+
+    onssld32hzClick() { 
+                    this.checkdisplay('0'); }
+    
+    
+
+    connectedCallback()
+    {
+        // Botones numericos
+        /* 
+        this.btn0.onclick = this.onbtn0Click.bind(this);
+        this.btn1.onclick = this.onbtn1Click.bind(this);
+        this.btn2.onclick = this.onbtn2Click.bind(this);
+        this.btn3.onclick = this.onbtn3Click.bind(this);
+        this.btn4.onclick = this.onbtn4Click.bind(this);
+        this.btn5.onclick = this.onbtn5Click.bind(this);
+        this.btn6.onclick = this.onbtn6Click.bind(this);
+        this.btn7.onclick = this.onbtn7Click.bind(this);
+        this.btn8.onclick = this.onbtn8Click.bind(this);
+        this.btn9.onclick = this.onbtn9Click.bind(this);
+
+        // Botones de operaciones
+
+        this.btnPlus.onclick = this.onbtnplusClick.bind(this);
+        this.btnMinus.onclick = this.onbtnminusClick.bind(this);
+        this.btnMult.onclick = this.onbtnmultClick.bind(this);
+        this.btnDiv.onclick = this.onbtndivClick.bind(this);
+        this.btnDot.onclick = this.onbtndotClick.bind(this);
+        this.btnResult.onclick = this.onbtnResultClick.bind(this);
+        this.btnDelete.onclick = this.onbtnDeleteClick.bind(this);
+        */
+
+    }
+
+    disconnectedCallback()
+    {
+       /*
+        // Botones numericos
+        this.btn0.onclick = null;
+        this.btn1.onclick = null;
+        this.btn2.onclick = null;
+        this.btn3.onclick = null;
+        this.btn4.onclick = null;
+        this.btn5.onclick = null;
+        this.btn6.onclick = null;
+        this.btn7.onclick = null;
+        this.btn8.onclick = null;
+        this.btn9.onclick = null;
+
+        // Botones de operaciones
+
+        this.btnPlus.onclick = null;
+        this.btnMinus.onclick = null;
+        this.btnMult.onclick = null;
+        this.btnDiv.onclick = null;
+        this.btnDot.onclick = null;
+        this.btnResult.onclick = null;
+        this.btnDelete.onclick = null;
+*/
+    }
+}
+
+customElements.define('x-equalizer', Equalizer);
+
+
+function main()
+{
+    let myCustomEqualizer = new Equalizer();
+    document.body.appendChild(myCustomEqualizer);
+    
+}
+
+window.onload = main;
+
+</script>
+
+</html>
