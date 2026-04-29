@@ -1,0 +1,130 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seminario Ejercicio 1</title>
+    <style>
+        table, tr, td {
+            margin: auto;
+            border: 1px solid white;
+            border-collapse: collapse;
+
+        }
+        /* Centrar el título */
+        h1 { text-align: center; } 
+        
+    </style>
+</head>
+
+<body>
+</body> 
+
+<script>
+
+class Saludador extends HTMLElement
+{
+    constructor()
+    {   
+        // Llamar al constructor de la clase padre (HTMLElement)
+        super();
+
+        // Crear el título del programa (aca se crea el titulo que estaba en H1)
+        this.uptitle = document.createElement('h1');
+        this.uptitle.innerText = 'Saludador 3000';
+
+
+        // Crear los elementos del saludador
+        this.displaynombre = document.createElement('input');
+        this.displayapellido = document.createElement('input');
+        this.btnnombre = document.createElement('button');
+        this.btapellido = document.createElement('button');
+        this.btnsaludar = document.createElement('button');
+        this.btnreiniciar = document.createElement('button');
+        
+        
+        // Preparacion de las instancias
+        this.btnnombre.innerText = 'Ingresar Nombre';
+        this.btapellido.innerText = 'Ingresar Apellido';
+        this.btnsaludar.innerText = 'Saludar';
+        this.btnreiniciar.innerText = 'Reiniciar';
+        
+        this.displaynombre.type = 'text';
+        this.displayapellido.type = 'text';
+        this.displaynombre.readOnly = true;
+        this.displayapellido.readOnly = true;
+        //this.displaynombre.style.textAlign = 'center';
+        //this.displayapellido.style.textAlign = 'center';
+        this.displaynombre.value = '';
+        this.displayapellido.value = '';
+
+        
+
+
+        // Agregar los elementos al DOM  (DOM = arbol de objetos)
+        
+        this.appendChild(this.uptitle);
+        this.appendChild(this.btnnombre);
+        this.appendChild(this.displaynombre);
+        this.appendChild(this.btapellido);
+        this.appendChild(this.displayapellido);
+        this.appendChild(this.btnsaludar);
+        this.appendChild(this.btnreiniciar);
+    }
+
+    // se podrian formatear directamente cuando se muestra pero use funciones como practica y para que se pueda cambiar el formato facilmente
+    
+    // el nombre tendra el formato de la primera letra mayuscula y el resto minusculas
+    formatearNombre(nombre) {
+        return nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
+    }
+    
+    // el apellido tendra el formato de todas las letras mayusculas
+    formateaerApellido(apellido) {
+        return apellido.toUpperCase();
+    }
+
+
+    onbtnombreClick() { 
+                    this.displaynombre.value = prompt('Ingrese su nombre:'); }
+    onbtnapellidoClick() { 
+                    this.displayapellido.value = prompt('Ingrese su apellido:'); }
+    onbtnreiniciarClick() {
+                    this.displaynombre.value = '';
+                    this.displayapellido.value = ''; }
+    onbtnsaludarClick() {
+                    alert(`¡Buenos días, ${this.formateaerApellido(this.displayapellido.value)} ${this.formatearNombre(this.displaynombre.value)}!`);
+                }
+
+    connectedCallback()
+    {
+        this.btnnombre.onclick = this.onbtnombreClick.bind(this);
+        this.btapellido.onclick = this.onbtnapellidoClick.bind(this);
+        this.btnreiniciar.onclick = this.onbtnreiniciarClick.bind(this);
+        this.btnsaludar.onclick = this.onbtnsaludarClick.bind(this);
+    }
+
+    disconnectedCallback()
+    {
+        this.btnnombre.onclick = null;
+        this.btapellido.onclick = null;
+        this.btnreiniciar.onclick = null;
+        this.btnsaludar.onclick = null;
+
+    }
+}
+
+customElements.define('x-saludador', Saludador);
+
+
+function main()
+{
+    let myCustomSaludador = new Saludador();
+    document.body.appendChild(myCustomSaludador);
+    
+}
+
+window.onload = main;
+
+</script>
+
+</html>
