@@ -1,0 +1,124 @@
+<!-- Ejercicio 2: Construya un programa que solicite al usuario su fecha de nacimiento
+y que luego valide si la cadena de texto ingresada es realmente una fecha. 
+En caso de que no, deberá mostrar un mensaje de error notificando que el texto 
+suministrado es inválido y que vuelva a pedir la fecha hasta que sea válida.
+Cada error deberá incluir el número de reintentos. 
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seminario Ejercicio 2</title>
+    <style>
+        table, tr, td {
+            margin: auto;
+            border: 1px solid white;
+            border-collapse: collapse;
+
+        }
+        /* Centrar el título */
+        h1 { text-align: center; } 
+        
+    </style>
+</head>
+
+<body>
+</body> 
+
+<script>
+
+class ValidadorFecha extends HTMLElement
+{
+    constructor()
+    {   
+        // Llamar al constructor de la clase padre (HTMLElement)
+        super();
+
+        // Crear el título del programa (aca se crea el titulo que estaba en H1)
+        this.uptitle = document.createElement('h1');
+        this.uptitle.innerText = 'Validador de Fecha de Nacimiento';
+
+
+        // Crear los elementos del validador
+        this.displayfecha = document.createElement('input');
+        this.btnvalidar = document.createElement('button');
+        this.labelcantidadintentos = document.createElement('label');
+        this.displayintentos = document.createElement('input');
+        
+
+        // Preparacion de las instancias
+        this.displayfecha.type = 'text';
+        this.btnvalidar.innerText = 'Validar Fecha';
+        this.displayintentos.type = 'number';
+        this.displayintentos.readOnly = true;
+        this.displayintentos.value = 0;
+        this.labelcantidadintentos.innerText = 'Cantidad de Intentos: ';
+        this.displayfecha.placeholder = 'DD/MM/YYYY';
+
+        // Agregar los elementos al DOM  (DOM = arbol de objetos)
+        
+        this.appendChild(this.uptitle);
+        this.appendChild(this.displayfecha);
+        this.appendChild(this.btnvalidar);
+        this.appendChild(this.labelcantidadintentos);
+        this.appendChild(this.displayintentos);
+    }
+
+    onbtnvalidarClick() {
+        let fecha = this.displayfecha.value;
+        let intentos = parseInt(this.displayintentos.value, 10) || 0;
+
+        if (this.esFechaValida(fecha)) {
+            alert('Fecha válida: ' + fecha);
+            this.displayintentos.value = 0;
+        } else {
+            intentos++;
+            this.displayintentos.value = intentos;
+            alert(`Fecha inválida.\nVuelva a ingresar una fecha Valida.\nDebe ser en el formato DD/MM/YYYY\nIntento ${intentos}.`);
+        }
+    }
+
+    esFechaValida(fecha)
+    {
+        const re = /^\s*(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(\d{4})\s*$/;
+        if (!re.test(fecha)) return false;
+
+        const [, dd, mm, yyyy] = fecha.match(re);
+        const d = parseInt(dd, 10);
+        const m = parseInt(mm, 10);
+        const y = parseInt(yyyy, 10);
+
+        const esBisiesto = (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0));
+        const diasPorMes = [31, esBisiesto ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        return d >= 1 && d <= diasPorMes[m - 1];
+    }
+
+    connectedCallback()
+    {
+        this.btnvalidar.onclick = this.onbtnvalidarClick.bind(this);
+    }
+
+    disconnectedCallback()
+    {
+        this.btnvalidar.onclick = null;
+    }
+}
+
+
+customElements.define('x-validadorfecha', ValidadorFecha);
+
+
+function main()
+{
+    let myCustomValidadorFecha = new ValidadorFecha();
+    document.body.appendChild(myCustomValidadorFecha);
+
+}
+
+window.onload = main;
+
+</script>
+
+</html>
