@@ -49,7 +49,7 @@ class Equalizer extends HTMLElement
 
         // TODO:  aca deberia ir la creacion de la estructura de datos que 
         // representaran las frecuencias y sus valores.
-        this.data = {
+        this._data = {
             '32hz': 0,
             '64hz': 0,
             '130hz': 0,
@@ -68,28 +68,157 @@ class Equalizer extends HTMLElement
         this.uptitle.innerText = 'Graphic EQ';
 
 
-        // Crear los elementos de la calculadora
-        this.display = document.createElement('input');
+        // Crear los elementos del EQ
+
+        this.display = document.createElement('display');
         this.btnGuardar = document.createElement('button');
         this.btnX = document.createElement('button');
         this.btnOk = document.createElement('button');
         this.btnCancel = document.createElement('button');
         this.btnAudition = document.createElement('button');
         this.btnHelp = document.createElement('button');
-        this.sld32hz = document.createElement('slider');
-        this.sld64hz = document.createElement('slider');
-        this.sld130hz = document.createElement('slider');
-        this.sld260hz = document.createElement('slider');
-        this.sld500hz = document.createElement('slider');
-        this.sld1k = document.createElement('slider');
-        this.sld2k = document.createElement('slider');
-        this.sld4k = document.createElement('slider');
-        this.sld8dot3k = document.createElement('slider');
-        this.sld16dot5k = document.createElement('ranger');
-        
+
+        // sliders y su correspondiente span para mostrar el valor
+
+        this.lab32hz = document.createElement('label');
+        this.lab64hz = document.createElement('label');
+        this.lab130hz = document.createElement('label');
+        this.lab260hz = document.createElement('label');
+        this.lab500hz = document.createElement('label');
+        this.lab1k = document.createElement('label');
+        this.lab2k = document.createElement('label');
+        this.lab4k = document.createElement('label');
+        this.lab8dot3k = document.createElement('label');
+        this.lab16dot5k = document.createElement('label');
+
+        this.sld32hz = document.createElement('input');
+        this.sld64hz = document.createElement('input');
+        this.sld130hz = document.createElement('input');
+        this.sld260hz = document.createElement('input');
+        this.sld500hz = document.createElement('input');
+        this.sld1k = document.createElement('input');
+        this.sld2k = document.createElement('input');
+        this.sld4k = document.createElement('input');
+        this.sld8dot3k = document.createElement('input');
+        this.sld16dot5k = document.createElement('input');
+
+        this.span32 = document.createElement('span');
+        this.span64 = document.createElement('span');
+        this.span130 = document.createElement('span');
+        this.span260 = document.createElement('span');
+        this.span500 = document.createElement('span');
+        this.span1k = document.createElement('span');
+        this.span2k = document.createElement('span');
+        this.span4k = document.createElement('span');
+        this.span8dot3k = document.createElement('span');
+        this.span16dot5k = document.createElement('span');
 
 
-        // armado de la tabla que servira de estructura para la calculadora
+        // definicion de las propiedades de los input para que
+        // se comporten como sliders y tengan el valor correspondiente
+        this.sld32hz.type = 'range';
+        this.sld32hz.id = '32hz';
+        this.sld32hz.min = -12;
+        this.sld32hz.max = 12;
+        this.sld32hz.value = this._data['32hz'];
+
+        this.sld64hz.type = 'range';
+        this.sld64hz.id = '64hz';
+        this.sld64hz.min = -12;
+        this.sld64hz.max = 12;
+        this.sld64hz.value = this._data['64hz'];
+
+        this.sld130hz.type = 'range';
+        this.sld130hz.id = '130hz';
+        this.sld130hz.min = -12;
+        this.sld130hz.max = 12;
+        this.sld130hz.value = this._data['130hz'];
+
+        this.sld260hz.type = 'range';
+        this.sld260hz.id = '260hz';
+        this.sld260hz.min = -12;
+        this.sld260hz.max = 12;
+        this.sld260hz.value = this._data['260hz'];
+
+        this.sld500hz.type = 'range';
+        this.sld500hz.id = '500hz';
+        this.sld500hz.min = -12;
+        this.sld500hz.max = 12;
+        this.sld500hz.value = this._data['500hz'];
+
+        this.sld1k.type = 'range';
+        this.sld1k.id = '1k';
+        this.sld1k.min = -12;
+        this.sld1k.max = 12;
+        this.sld1k.value = this._data['1k'];
+
+        this.sld2k.type = 'range';
+        this.sld2k.id = '2k';
+        this.sld2k.min = -12;
+        this.sld2k.max = 12;
+        this.sld2k.value = this._data['2k'];
+
+        this.sld4k.type = 'range';
+        this.sld4k.id = '4k';
+        this.sld4k.min = -12;
+        this.sld4k.max = 12;
+        this.sld4k.value = this._data['4k'];
+
+        this.sld8dot3k.type = 'range';
+        this.sld8dot3k.id = '8.3k';
+        this.sld8dot3k.min = -12;
+        this.sld8dot3k.max = 12;
+        this.sld8dot3k.value = this._data['8.3k'];
+
+        this.sld16dot5k.type = 'range';
+        this.sld16dot5k.id = '16.5k';
+        this.sld16dot5k.min = -12;
+        this.sld16dot5k.max = 12;
+        this.sld16dot5k.value = this._data['16.5k'];
+
+        this.span32.id = 'val32hz';
+        this.span32.textContent = this._data['32hz'] + ' dB';
+        this.span64.id = 'val64hz';
+        this.span64.textContent = this._data['64hz'] + ' dB';
+        this.span130.id = 'val130hz';
+        this.span130.textContent = this._data['130hz'] + ' dB';
+        this.span260.id = 'val260hz';
+        this.span260.textContent = this._data['260hz'] + ' dB';
+        this.span500.id = 'val500hz';
+        this.span500.textContent = this._data['500hz'] + ' dB';
+        this.span1k.id = 'val1k';
+        this.span1k.textContent = this._data['1k'] + ' dB';
+        this.span2k.id = 'val2k';
+        this.span2k.textContent = this._data['2k'] + ' dB';
+        this.span4k.id = 'val4k';
+        this.span4k.textContent = this._data['4k'] + ' dB';
+        this.span8dot3k.id = 'val8dot3k';
+        this.span8dot3k.textContent = this._data['8.3k'] + ' dB';
+        this.span16dot5k.id = 'val16dot5k';
+        this.span16dot5k.textContent = this._data['16.5k'] + ' dB';
+
+        this.lab32hz.htmlFor = '32hz';
+        this.lab32hz.textContent = '32 Hz';
+        this.lab64hz.htmlFor = '64hz';
+        this.lab64hz.textContent = '64 Hz';
+        this.lab130hz.htmlFor = '130hz';
+        this.lab130hz.textContent = '130 Hz';
+        this.lab260hz.htmlFor = '260hz';
+        this.lab260hz.textContent = '260 Hz';
+        this.lab500hz.htmlFor = '500hz';
+        this.lab500hz.textContent = '500 Hz';
+        this.lab1k.htmlFor = '1k';
+        this.lab1k.textContent = '1 kHz';
+        this.lab2k.htmlFor = '2k';
+        this.lab2k.textContent = '2 kHz';
+        this.lab4k.htmlFor = '4k';
+        this.lab4k.textContent = '4 kHz';
+        this.lab8dot3k.htmlFor = '8.3k';
+        this.lab8dot3k.textContent = '8.3 kHz';
+        this.lab16dot5k.htmlFor = '16.5k';
+        this.lab16dot5k.textContent = '16.5 kHz';
+
+        // armado de la tabla que servira de estructura del EQ
         this.table = document.createElement('table');
 
         let row0 = this.table.insertRow();
@@ -97,40 +226,95 @@ class Equalizer extends HTMLElement
         //col0.colSpan = 4;
         col0.appendChild(this.display);    
 
-
         let row1 = this.table.insertRow();
+        let col01 = row1.insertCell();
+        col01.appendChild(this.lab32hz);
         let col1 = row1.insertCell();
         col1.appendChild(this.sld32hz);
         let col2 = row1.insertCell();
-        col2.appendChild(this.sld64hz);
-        let col3 = row1.insertCell();
-        col3.appendChild(this.sld130hz);
-        let col4 = row1.insertCell();
-        col4.appendChild(this.sld260hz);
+        col2.appendChild(this.span32);
 
-        let col5 = row1.insertCell();
-        col5.appendChild(this.sld500hz);
-        let col6 = row1.insertCell();
-        col6.appendChild(this.sld1k);
-        let col7 = row1.insertCell();
-        col7.appendChild(this.sld2k);
-        let col8 = row1.insertCell();
-        col8.appendChild(this.sld4k);
+        let row2 = this.table.insertRow();
+        let col02 = row2.insertCell();
+        col02.appendChild(this.lab64hz);
+        let col3 = row2.insertCell();
+        col3.appendChild(this.sld64hz);
+        let col4 = row2.insertCell();
+        col4.appendChild(this.span64);
 
-        let col9 = row1.insertCell();
-        col9.appendChild(this.sld8dot3k);
-        let col10 = row1.insertCell();
-        col10.appendChild(this.sld16dot5k);
+        let row3 = this.table.insertRow();
+        let col03 = row3.insertCell();
+        col03.appendChild(this.lab130hz);
+        let col5 = row3.insertCell();
+        col5.appendChild(this.sld130hz);
+        let col6 = row3.insertCell();
+        col6.appendChild(this.span130);
+
+        let row4 = this.table.insertRow();
+        let col04 = row4.insertCell();
+        col04.appendChild(this.lab260hz);
+        let col7 = row4.insertCell();
+        col7.appendChild(this.sld260hz);
+        let col8 = row4.insertCell();
+        col8.appendChild(this.span260);
+
+        let row5 = this.table.insertRow();
+        let col05 = row5.insertCell();
+        col05.appendChild(this.lab500hz);
+        let col9 = row5.insertCell();
+        col9.appendChild(this.sld500hz);
+        let col10 = row5.insertCell();
+        col10.appendChild(this.span500);
+
+        let row6 = this.table.insertRow();
+        let col06 = row6.insertCell();
+        col06.appendChild(this.lab1k);
+        let col11 = row6.insertCell();
+        col11.appendChild(this.sld1k);
+        let col12 = row6.insertCell();
+        col12.appendChild(this.span1k);
+
+        let row7 = this.table.insertRow();
+        let col07 = row7.insertCell();
+        col07.appendChild(this.lab2k);
+        let col13 = row7.insertCell();
+        col13.appendChild(this.sld2k);
+        let col14 = row7.insertCell();
+        col14.appendChild(this.span2k);
+
+        let row8 = this.table.insertRow();
+        let col08 = row8.insertCell();
+        col08.appendChild(this.lab4k);
+        let col15 = row8.insertCell();
+        col15.appendChild(this.sld4k);
+        let col16 = row8.insertCell();
+        col16.appendChild(this.span4k);
+
+        let row9 = this.table.insertRow();
+        let col09 = row9.insertCell();
+        col09.appendChild(this.lab8dot3k);
+        let col17 = row9.insertCell();
+        col17.appendChild(this.sld8dot3k);
+        let col18 = row9.insertCell();
+        col18.appendChild(this.span8dot3k);
+        
+        let row10 = this.table.insertRow();
+        let col010 = row10.insertCell();
+        col010.appendChild(this.lab16dot5k);
+        let col19 = row10.insertCell();
+        col19.appendChild(this.sld16dot5k);
+        let col20 = row10.insertCell();
+        col20.appendChild(this.span16dot5k);
         
         
-        let col17 = row1.insertCell();
-        col17.appendChild(this.btnOk);
-        let col18 = row1.insertCell();
-        col18.appendChild(this.btnCancel);
-        let col19 = row1.insertCell();
-        col19.appendChild(this.btnAudition);
-        let col20 = row1.insertCell();
-        col20.appendChild(this.btnHelp);
+        let col21 = row1.insertCell();
+        col21.appendChild(this.btnOk);
+        let col22 = row1.insertCell();
+        col22.appendChild(this.btnCancel);
+        let col23 = row1.insertCell();
+        col23.appendChild(this.btnAudition);
+        let col24 = row1.insertCell();
+        col24.appendChild(this.btnHelp);
         
         // Preparacion de las instancias
         
@@ -139,7 +323,12 @@ class Equalizer extends HTMLElement
         this.display.style.textAlign = 'right';
         this.display.value = '';
         
-
+        this.btnGuardar.innerText = 'Guardar';
+        this.btnX.innerText = 'X';
+        this.btnOk.innerText = 'OK';
+        this.btnCancel.innerText = 'Cancel';
+        this.btnAudition.innerText = 'Audition';
+        this.btnHelp.innerText = 'Help';
         
         // Agregar los elementos al DOM  (DOM = arbol de objetos)
         
@@ -147,72 +336,89 @@ class Equalizer extends HTMLElement
         this.appendChild(this.uptitle);
         this.appendChild(this.table);
 
+        // Escuchar los cambios en los sliders
+        this.sld32hz.oninput = () => {
+            this._data['32hz'] = this.sld32hz.value;
+            this.span32.textContent = this.sld32hz.value + ' dB';
+        };
+        this.sld64hz.oninput = () => {
+            this._data['64hz'] = this.sld64hz.value;
+            this.span64.textContent = this.sld64hz.value + ' dB';
+        };
+        this.sld130hz.oninput = () => {
+            this._data['130hz'] = this.sld130hz.value;
+            this.span130.textContent = this.sld130hz.value + ' dB';
+        };
+        this.sld260hz.oninput = () => {
+            this._data['260hz'] = this.sld260hz.value;
+            this.span260.textContent = this.sld260hz.value + ' dB';
+        };
+        this.sld500hz.oninput = () => {
+            this._data['500hz'] = this.sld500hz.value;
+            this.span500.textContent = this.sld500hz.value + ' dB';
+        };
+        this.sld1k.oninput = () => {
+            this._data['1k'] = this.sld1k.value;
+            this.span1k.textContent = this.sld1k.value + ' dB';
+        };
+        this.sld2k.oninput = () => {
+            this._data['2k'] = this.sld2k.value;
+            this.span2k.textContent = this.sld2k.value + ' dB';
+        };
+        this.sld4k.oninput = () => {
+            this._data['4k'] = this.sld4k.value;
+            this.span4k.textContent = this.sld4k.value + ' dB';
+        };
+        this.sld8dot3k.oninput = () => {
+            this._data['8.3k'] = this.sld8dot3k.value;
+            this.span8dot3k.textContent = this.sld8dot3k.value + ' dB';
+        };
+        this.sld16dot5k.oninput = () => {
+            this._data['16.5k'] = this.sld16dot5k.value;
+            this.span16dot5k.textContent = this.sld16dot5k.value + ' dB';
+        };
+
     }
 
 // TODO: metodo GETDATA y SETDATA
 
-
-
-    onssld32hzClick() { 
-                    this.checkdisplay('0'); }
+    getData() {
+        return this._data;
+    }
     
+    setData(newData) {
+        this._data = newData;
+        
+        // Actualizamos los sliders
+        this.sld32hz.value = this._data._32hz;
+        this.sld64hz.value = this._data._64hz;
+        this.sld128hz.value = this._data._128hz;
+        this.sld256hz.value = this._data._256hz;
+        this.sld512hz.value = this._data._512hz;
+        this.sld1024hz.value = this._data._1024hz;
+        this.sld2048hz.value = this._data._2048hz;
+        this.sld4096hz.value = this._data._4096hz;
+        this.sld8192hz.value = this._data._8192hz;
+        this.sld16384hz.value = this._data._16384hz;
+    }
     
+    onAuditionClick() {
+        let config = this.getData();
+        console.log('Auditioning with config:', config);}
 
     connectedCallback()
     {
-        // Botones numericos
-        /* 
-        this.btn0.onclick = this.onbtn0Click.bind(this);
-        this.btn1.onclick = this.onbtn1Click.bind(this);
-        this.btn2.onclick = this.onbtn2Click.bind(this);
-        this.btn3.onclick = this.onbtn3Click.bind(this);
-        this.btn4.onclick = this.onbtn4Click.bind(this);
-        this.btn5.onclick = this.onbtn5Click.bind(this);
-        this.btn6.onclick = this.onbtn6Click.bind(this);
-        this.btn7.onclick = this.onbtn7Click.bind(this);
-        this.btn8.onclick = this.onbtn8Click.bind(this);
-        this.btn9.onclick = this.onbtn9Click.bind(this);
-
-        // Botones de operaciones
-
-        this.btnPlus.onclick = this.onbtnplusClick.bind(this);
-        this.btnMinus.onclick = this.onbtnminusClick.bind(this);
-        this.btnMult.onclick = this.onbtnmultClick.bind(this);
-        this.btnDiv.onclick = this.onbtndivClick.bind(this);
-        this.btnDot.onclick = this.onbtndotClick.bind(this);
-        this.btnResult.onclick = this.onbtnResultClick.bind(this);
-        this.btnDelete.onclick = this.onbtnDeleteClick.bind(this);
-        */
-
+        this.btnAudition.onclick = this.onAuditionClick.bind(this);
     }
 
     disconnectedCallback()
     {
-       /*
-        // Botones numericos
-        this.btn0.onclick = null;
-        this.btn1.onclick = null;
-        this.btn2.onclick = null;
-        this.btn3.onclick = null;
-        this.btn4.onclick = null;
-        this.btn5.onclick = null;
-        this.btn6.onclick = null;
-        this.btn7.onclick = null;
-        this.btn8.onclick = null;
-        this.btn9.onclick = null;
-
-        // Botones de operaciones
-
-        this.btnPlus.onclick = null;
-        this.btnMinus.onclick = null;
-        this.btnMult.onclick = null;
-        this.btnDiv.onclick = null;
-        this.btnDot.onclick = null;
-        this.btnResult.onclick = null;
-        this.btnDelete.onclick = null;
-*/
+        this.btnAudition.onclick = null;
     }
 }
+
+
+
 
 customElements.define('x-equalizer', Equalizer);
 

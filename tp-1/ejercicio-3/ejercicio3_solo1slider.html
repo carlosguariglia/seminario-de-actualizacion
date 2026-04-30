@@ -1,0 +1,194 @@
+<!-- 3. Observe la imagen adjuntada "ejercicio_3_equalizer". Construya el WebComponent 
+correspondiente. Considere que el WebComponent internamente contiene una propiedad 
+que se trata de un objeto de datos que posee toda la información representada en la
+imagen. El WebComponent debe tener un método llamado  getData para obtener dichos 
+datos y setData para asignarlos. El método setData debe aplicar instantánteamente 
+las modificaciones visuales.
+-->
+
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphic EQ</title>
+    <style>
+        table, tr, td {
+            margin: auto;
+            border: 1px solid white;
+            border-collapse: collapse;
+
+        }
+        /* Centrar el título de la calculadora */
+        h1 { text-align: center; } 
+        
+                
+        
+    </style>
+</head>
+
+
+
+<body>
+
+</body> 
+
+
+
+<script>
+
+class Equalizer extends HTMLElement
+{
+    constructor()
+    {   
+        // Llamar al constructor de la clase padre (HTMLElement)
+        super();
+
+        // TODO:  aca deberia ir la creacion de la estructura de datos que 
+        // representaran las frecuencias y sus valores.
+        this._data = {
+            '32hz': 0,
+        };
+
+
+        // Crear el título de la calculadora (aca se crea el titulo que estaba en H1)
+        this.uptitle = document.createElement('h1');
+        this.uptitle.innerText = 'Graphic EQ';
+
+
+        // Crear los elementos del EQ
+
+        this.display = document.createElement('display');
+        this.btnGuardar = document.createElement('button');
+        this.btnX = document.createElement('button');
+        this.btnOk = document.createElement('button');
+        this.btnCancel = document.createElement('button');
+        this.btnAudition = document.createElement('button');
+        this.btnHelp = document.createElement('button');
+
+        // sliders y su correspondiente span para mostrar el valor
+
+        this.lab32hz = document.createElement('label');
+        
+        this.sld32hz = document.createElement('input');
+    
+        this.span32 = document.createElement('span');
+    
+
+        // definicion de las propiedades de los input para que
+        // se comporten como sliders y tengan el valor correspondiente
+        this.sld32hz.type = 'range';
+        this.sld32hz.id = '32hz';
+        this.sld32hz.min = -12;
+        this.sld32hz.max = 12;
+        this.sld32hz.value = this._data['32hz'];
+
+    
+
+        this.span32.id = 'val32hz';
+        this.span32.textContent = this._data['32hz'] + ' dB';
+    
+        this.lab32hz.htmlFor = '32hz';
+        this.lab32hz.textContent = '32 Hz';
+    
+        // armado de la tabla que servira de estructura del EQ
+        this.table = document.createElement('table');
+
+        let row0 = this.table.insertRow();
+        let col0 = row0.insertCell();
+        //col0.colSpan = 4;
+        col0.appendChild(this.display);    
+
+        let row1 = this.table.insertRow();
+        let col01 = row1.insertCell();
+        col01.appendChild(this.lab32hz);
+        let col1 = row1.insertCell();
+        col1.appendChild(this.sld32hz);
+        let col2 = row1.insertCell();
+        col2.appendChild(this.span32);
+
+    
+        
+        let col21 = row1.insertCell();
+        col21.appendChild(this.btnOk);
+        let col22 = row1.insertCell();
+        col22.appendChild(this.btnCancel);
+        let col23 = row1.insertCell();
+        col23.appendChild(this.btnAudition);
+        let col24 = row1.insertCell();
+        col24.appendChild(this.btnHelp);
+        
+        // Preparacion de las instancias
+        
+        this.display.type = '';
+        this.display.readOnly = true;
+        this.display.style.textAlign = 'right';
+        this.display.value = '';
+        
+        this.btnGuardar.innerText = 'Guardar';
+        this.btnX.innerText = 'X';
+        this.btnOk.innerText = 'OK';
+        this.btnCancel.innerText = 'Cancel';
+        this.btnAudition.innerText = 'Audition';
+        this.btnHelp.innerText = 'Help';
+        
+        // Agregar los elementos al DOM  (DOM = arbol de objetos)
+        
+        // aca se agrega el titulo
+        this.appendChild(this.uptitle);
+        this.appendChild(this.table);
+
+        // Escuchar los cambios en los sliders
+        this.sld32hz.oninput = () => {
+            this._data['32hz'] = this.sld32hz.value;
+            this.span32.textContent = this.sld32hz.value + ' dB';
+        };
+    
+    }
+
+// TODO: metodo GETDATA y SETDATA
+
+    getData() {
+        return this._data;
+    }
+    
+    setData(newData) {
+        this._data = newData;
+        
+        // Actualizamos los sliders
+        this.sld32hz.value = this._data._32hz;
+        }
+    
+    onAuditionClick() {
+        let config = this.getData();
+        console.log('Auditioning with config:', config);}
+
+    connectedCallback()
+    {
+        this.btnAudition.onclick = this.onAuditionClick.bind(this);
+    }
+
+    disconnectedCallback()
+    {
+        this.btnAudition.onclick = null;
+    }
+}
+
+
+
+
+customElements.define('x-equalizer', Equalizer);
+
+
+function main()
+{
+    let myCustomEqualizer = new Equalizer();
+    document.body.appendChild(myCustomEqualizer);
+    
+}
+
+window.onload = main;
+
+</script>
+
+</html>
