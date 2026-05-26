@@ -6,7 +6,6 @@ datos y setData para asignarlos. El método setData debe aplicar instantánteame
 las modificaciones visuales.
 -->
 
-
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -19,23 +18,63 @@ las modificaciones visuales.
             border-collapse: collapse;
 
         }
-        /* Centrar el título de la calculadora */
-        h1 { text-align: center; } 
-        
-                
-        
+        /* Centrar el título del equqalizador */
+        h1 { text-align: center; }         
     </style>
 </head>
 
-
-
 <body>
-
 </body> 
 
-
-
 <script>
+
+class Slider extends HTMLElement
+{
+    constructor(labelText, initialValue)
+    {   super();
+        this._value = initialValue;
+
+        this.label = document.createElement('label');
+        this.input = document.createElement('input');
+        this.span = document.createElement('span');
+
+        this.input.type = 'range';
+        this.input.min = -12;
+        this.input.max = 12;
+        this.input.value = initialValue;
+
+        this.span.textContent = initialValue + ' dB';
+
+        this.label.textContent = labelText;
+    
+        this._bloque = document.createElement('div');
+        this._bloque.appendChild(this.label);
+        this._bloque.appendChild(this.input);
+        this._bloque.appendChild(this.span);
+    
+    }
+
+    // contenedor para insertar en el DOM de una sola vez
+    get bloque() { return this._bloque; }
+
+    // valor público
+    get value() { return this._value; }
+
+    set value(valor) {
+        this._value = valor;
+        this.input.value = this._value;
+        this.span.textContent = this._value + ' dB';
+    }
+
+    connectedCallback() {}
+
+    disconnectedCallback(){}
+
+    
+} // fin clase Slider
+
+customElements.define('x-slider', Slider);
+
 
 class Equalizer extends HTMLElement
 {
@@ -44,12 +83,20 @@ class Equalizer extends HTMLElement
         // Llamar al constructor de la clase padre (HTMLElement)
         super();
 
-        // TODO:  aca deberia ir la creacion de la estructura de datos que 
-        // representaran las frecuencias y sus valores.
-        this._data = {
-            '32hz': 0,
-        };
+        // mantengo los datos aca, mientras que en el arreglo mantengo los bloques de los sliders
+        this._data = {};
 
+        this._data['32 Hz'] = 0;
+        this._data['64 Hz'] = 0;
+    
+        
+
+
+        // estructura de datos que representaran las frecuencias y sus valores.
+        // array of sliders
+        
+        this.slidersArr = [];
+        
 
         // Crear el título de la calculadora (aca se crea el titulo que estaba en H1)
         this.uptitle = document.createElement('h1');
@@ -58,7 +105,7 @@ class Equalizer extends HTMLElement
 
         // Crear los elementos del EQ
 
-        this.display = document.createElement('display');
+        this.display = document.createElement('input');
         this.btnGuardar = document.createElement('button');
         this.btnX = document.createElement('button');
         this.btnOk = document.createElement('button');
@@ -66,31 +113,17 @@ class Equalizer extends HTMLElement
         this.btnAudition = document.createElement('button');
         this.btnHelp = document.createElement('button');
 
-        // sliders y su correspondiente span para mostrar el valor
+        // sliders: crear instancias reutilizables de la clase Slider
+        this.sld32hz = new Slider('32 Hz', 0);
+        this.slidersArr.push(this.sld32hz);
+        // agrego a this_data las frecuencias y sus valores iniciales
+       
 
-        this.lab32hz = document.createElement('label');
+        this.sld64hz = new Slider('64 Hz', 0);
+        this.slidersArr.push(this.sld64hz);
         
-        this.sld32hz = document.createElement('input');
-    
-        this.span32 = document.createElement('span');
-    
 
-        // definicion de las propiedades de los input para que
-        // se comporten como sliders y tengan el valor correspondiente
-        this.sld32hz.type = 'range';
-        this.sld32hz.id = '32hz';
-        this.sld32hz.min = -12;
-        this.sld32hz.max = 12;
-        this.sld32hz.value = this._data['32hz'];
 
-    
-
-        this.span32.id = 'val32hz';
-        this.span32.textContent = this._data['32hz'] + ' dB';
-    
-        this.lab32hz.htmlFor = '32hz';
-        this.lab32hz.textContent = '32 Hz';
-    
         // armado de la tabla que servira de estructura del EQ
         this.table = document.createElement('table');
 
@@ -101,14 +134,13 @@ class Equalizer extends HTMLElement
 
         let row1 = this.table.insertRow();
         let col01 = row1.insertCell();
-        col01.appendChild(this.lab32hz);
-        let col1 = row1.insertCell();
-        col1.appendChild(this.sld32hz);
-        let col2 = row1.insertCell();
-        col2.appendChild(this.span32);
+        col01.appendChild(this.sld32hz.bloque);
+        let row02 = this.table.insertRow();
+        let col02 = row02.insertCell();
+        col02.appendChild(this.sld64hz.bloque);
 
-    
-        
+
+
         let col21 = row1.insertCell();
         col21.appendChild(this.btnOk);
         let col22 = row1.insertCell();
@@ -120,7 +152,7 @@ class Equalizer extends HTMLElement
         
         // Preparacion de las instancias
         
-        this.display.type = '';
+        this.display.type = 'text';
         this.display.readOnly = true;
         this.display.style.textAlign = 'right';
         this.display.value = '';
@@ -132,39 +164,51 @@ class Equalizer extends HTMLElement
         this.btnAudition.innerText = 'Audition';
         this.btnHelp.innerText = 'Help';
         
-        // Agregar los elementos al DOM  (DOM = arbol de objetos)
-        
-        // aca se agrega el titulo
+
         this.appendChild(this.uptitle);
         this.appendChild(this.table);
-
-        // Escuchar los cambios en los sliders
-        this.sld32hz.oninput = () => {
-            this._data['32hz'] = this.sld32hz.value;
-            this.span32.textContent = this.sld32hz.value + ' dB';
-        };
-    
     }
 
-// TODO: metodo GETDATA y SETDATA
+// metodo GETDATA y SETDATA
 
     getData() {
         return this._data;
     }
     
     setData(newData) {
-        this._data = newData;
-        
-        // Actualizamos los sliders
-        this.sld32hz.value = this._data._32hz;
-        }
     
+    }
+
+    onsSliderChange(event)  // recorro this_data y emparejo cada uno a los valores de los sliders
+    {   
+        event.target.value = event.target.input.value;
+
+        console.log(this.sld32hz.value, this.sld64hz.value);
+
+
+        for (let key in this._data) {
+            if (key === '32 Hz') {
+                this._data[key] = this.sld32hz.value;
+            } else if (key === '64 Hz') {
+                this._data[key] = this.sld64hz.value;
+            }
+        }
+        console.log('Data :', this._data);
+    }
+
+
+
     onAuditionClick() {
         let config = this.getData();
-        console.log('Auditioning with config:', config);}
-
+        console.log('Auditioning with config:', config);}   
+        
+    
     connectedCallback()
     {
+        // se movio aca el appendchild porque daba error al hacerlo en la clase
+        
+        this.sld32hz.input.oninput = this.onsSliderChange.bind(this);
+        this.sld64hz.input.oninput = this.onsSliderChange.bind(this);
         this.btnAudition.onclick = this.onAuditionClick.bind(this);
     }
 
@@ -172,16 +216,14 @@ class Equalizer extends HTMLElement
     {
         this.btnAudition.onclick = null;
     }
-}
-
-
-
+}  // fin clase Equalizer
 
 customElements.define('x-equalizer', Equalizer);
 
 
 function main()
 {
+    // crear el custom element via DOM (no usar `new Equalizer()` directamente)
     let myCustomEqualizer = new Equalizer();
     document.body.appendChild(myCustomEqualizer);
     

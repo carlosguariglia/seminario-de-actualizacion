@@ -1,0 +1,120 @@
+<!-- 4. A partir del ejemplo proporcionado en la página https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_chat&authuser=0 
+Nótese que se trata de una representación HTML/CSS/JS que denota una sección de intercambio 
+de mensajes de Chat. Construya una abstracción mediante WebComponents que encapsule esa
+ interfaz y diseñe un método que permita insertar los mensajes intercambiados.
+-->
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Ejercicio 4 — Chatter</title>
+
+	<style>
+	
+    </style>
+	
+    <script>
+	class Chatter extends HTMLElement {
+		constructor(){
+			super();
+		
+			this.escribeavatar1 = true;
+
+			this.uptitle = document.createElement('h1');
+			this.uptitle.innerText = 'Chat';
+
+			this.messages = document.createElement('div');
+			
+			this.input = document.createElement('input');
+			this.input.placeholder = 'Escribe un mensaje...';
+			this.input.style.textAlign = 'left';
+
+			this.sendBtn = document.createElement('button');
+			this.sendBtn.innerText = 'Enviar';
+
+            this.overBtn = document.createElement('button');
+			this.overBtn.innerText = 'Cambio';
+
+			this.inputRow = document.createElement('div');
+			this.inputRow.appendChild(this.input);
+			this.inputRow.appendChild(this.sendBtn);
+			this.inputRow.appendChild(this.overBtn);
+
+			this.appendChild(this.uptitle);
+			this.appendChild(this.messages);
+			this.appendChild(this.inputRow);
+		}
+
+		addMessage(text, sender){
+			const m = document.createElement('div');
+			m.textContent = text;
+			this.messages.appendChild(m);
+		}
+
+		
+		onSendClick(){
+			
+			
+			const text = this.input.value;
+			const m = document.createElement('div');
+			m.textContent = text;
+			if (this.escribeAvatar1)
+			{	m.style.textAlign = 'left';
+			} else 
+			{
+				m.style.textAlign = 'right';
+			}
+			this.messages.appendChild(m);
+			this.input.value = '';
+		}
+
+		
+        onCambioClick(){
+            // El mensaje deberia escribirse a la derecha o izquierda
+            // y tambien cambiar las fotitos
+            // TODO: como se manejan la ubicacion de los mensajes? por css?
+            
+        
+			if (this.escribeAvatar1) {
+				// escribo el mensaje a la derecha
+				// escribo el avatar1
+				this.input.style.textAlign = 'right';
+				this.escribeAvatar1 = false;
+			} else {
+				// escribo el mensaje a la izquierda
+				// escribo el avatar2
+				this.input.style.textAlign = 'left';
+				this.escribeAvatar1 = true;
+			}
+
+
+        }
+
+
+		connectedCallback(){
+			this.sendBtn.onclick = this.onSendClick.bind(this);
+			this.overBtn.onclick = this.onCambioClick.bind(this);
+		}
+
+		disconnectedCallback(){
+			this.sendBtn.onclick = null;
+			this.overBtn.onclick = null;
+		}
+	}
+
+	customElements.define('x-chat', Chatter);
+
+	function main(){
+		const chat = new Chatter();
+		document.body.appendChild(chat);
+	}
+
+	window.onload = main;
+	</script>
+</head>
+<body>
+    
+</body>
+</html>
+

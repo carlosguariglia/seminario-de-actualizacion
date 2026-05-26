@@ -35,10 +35,58 @@ las modificaciones visuales.
 <body>
 
 </body> 
+<!--    
 
+empezar a encapsular. En este caso concreto, lo que podés hacer es construir una clase Slider 
+también webComponent) que se encargue de construir y configurar ese input + etiqueta que usás
+para cada banda del ecualizador. Luego por composición simplificás todo el código sustituyendo
+varias líneas por:    this.slider32k = new Slider("32k", 0) <-- o algo similar.  Si tenés 8 bandas 
+del ecualizador, serán 8 instancias. Nada más. Lo mismo con el tema de la tabla. Nada te prohibe
+construir una función auxiliar que sea   createTableWith( numberRows, numberColumns) y que te
+devuelva la instancia ya lista o bien, crear una clase que encapsule la tabla y te permita
+acceder con un método  add( 1, 5, element ) <-- si querés un elemento en la fila 1 : columna 5.
+.Todo eso simplifica tus constructores. 
 
+-->
 
 <script>
+
+class Slider {
+    constructor(labelText, initialValue) {
+        
+        this.label = document.createElement('label');
+        this.label.textContent = labelText;
+
+        this.input = document.createElement('input');
+        this.input.type = 'range';
+        this.input.min = -12;
+        this.input.max = 12;
+        this.input.value = initialValue;
+
+        this.span = document.createElement('span');
+        this.span.textContent = initialValue + ' dB';
+
+        this.input.oninput = () => {
+        this._value = this.input.value;
+        this.span.textContent = this.input.value + ' dB';
+
+        this.bloque = document.createElement('div');
+        this.bloque.append(this.label, this.input, this.span);
+        };
+    }
+
+    get value() {
+        return this._value;
+    }
+
+    set value(newValue) {
+        this._value = newValue;
+        this.input.value = newValue;
+        this.span.textContent = newValue + ' dB';
+    }
+}
+
+
 
 class Equalizer extends HTMLElement
 {
@@ -78,145 +126,19 @@ class Equalizer extends HTMLElement
         this.btnAudition = document.createElement('button');
         this.btnHelp = document.createElement('button');
 
-        // sliders y su correspondiente span para mostrar el valor
+        // sliders creados a partir de la clase slider
 
-        this.lab32hz = document.createElement('label');
-        this.lab64hz = document.createElement('label');
-        this.lab130hz = document.createElement('label');
-        this.lab260hz = document.createElement('label');
-        this.lab500hz = document.createElement('label');
-        this.lab1k = document.createElement('label');
-        this.lab2k = document.createElement('label');
-        this.lab4k = document.createElement('label');
-        this.lab8dot3k = document.createElement('label');
-        this.lab16dot5k = document.createElement('label');
+        this.sld32hz = new Slider('32 Hz', 0);
+        this.sld64hz = new Slider('64 Hz', 0);
+        this.sld130hz = new Slider('130 Hz', 0);
+        this.sld260hz = new Slider('260 Hz', 0);
+        this.sld500hz = new Slider('500 Hz', 0);
+        this.sld1k = new Slider('1 kHz', 0);
+        this.sld2k = new Slider('2 kHz', 0);
+        this.sld4k = new Slider('4 kHz', 0);
+        this.sld8dot3k = new Slider('8.3 kHz', 0);
+        this.sld16dot5k = new Slider('16.5 kHz', 0);
 
-        this.sld32hz = document.createElement('input');
-        this.sld64hz = document.createElement('input');
-        this.sld130hz = document.createElement('input');
-        this.sld260hz = document.createElement('input');
-        this.sld500hz = document.createElement('input');
-        this.sld1k = document.createElement('input');
-        this.sld2k = document.createElement('input');
-        this.sld4k = document.createElement('input');
-        this.sld8dot3k = document.createElement('input');
-        this.sld16dot5k = document.createElement('input');
-
-        this.span32 = document.createElement('span');
-        this.span64 = document.createElement('span');
-        this.span130 = document.createElement('span');
-        this.span260 = document.createElement('span');
-        this.span500 = document.createElement('span');
-        this.span1k = document.createElement('span');
-        this.span2k = document.createElement('span');
-        this.span4k = document.createElement('span');
-        this.span8dot3k = document.createElement('span');
-        this.span16dot5k = document.createElement('span');
-
-
-        // definicion de las propiedades de los input para que
-        // se comporten como sliders y tengan el valor correspondiente
-        this.sld32hz.type = 'range';
-        this.sld32hz.id = '32hz';
-        this.sld32hz.min = -12;
-        this.sld32hz.max = 12;
-        this.sld32hz.value = this._data['32hz'];
-
-        this.sld64hz.type = 'range';
-        this.sld64hz.id = '64hz';
-        this.sld64hz.min = -12;
-        this.sld64hz.max = 12;
-        this.sld64hz.value = this._data['64hz'];
-
-        this.sld130hz.type = 'range';
-        this.sld130hz.id = '130hz';
-        this.sld130hz.min = -12;
-        this.sld130hz.max = 12;
-        this.sld130hz.value = this._data['130hz'];
-
-        this.sld260hz.type = 'range';
-        this.sld260hz.id = '260hz';
-        this.sld260hz.min = -12;
-        this.sld260hz.max = 12;
-        this.sld260hz.value = this._data['260hz'];
-
-        this.sld500hz.type = 'range';
-        this.sld500hz.id = '500hz';
-        this.sld500hz.min = -12;
-        this.sld500hz.max = 12;
-        this.sld500hz.value = this._data['500hz'];
-
-        this.sld1k.type = 'range';
-        this.sld1k.id = '1k';
-        this.sld1k.min = -12;
-        this.sld1k.max = 12;
-        this.sld1k.value = this._data['1k'];
-
-        this.sld2k.type = 'range';
-        this.sld2k.id = '2k';
-        this.sld2k.min = -12;
-        this.sld2k.max = 12;
-        this.sld2k.value = this._data['2k'];
-
-        this.sld4k.type = 'range';
-        this.sld4k.id = '4k';
-        this.sld4k.min = -12;
-        this.sld4k.max = 12;
-        this.sld4k.value = this._data['4k'];
-
-        this.sld8dot3k.type = 'range';
-        this.sld8dot3k.id = '8.3k';
-        this.sld8dot3k.min = -12;
-        this.sld8dot3k.max = 12;
-        this.sld8dot3k.value = this._data['8.3k'];
-
-        this.sld16dot5k.type = 'range';
-        this.sld16dot5k.id = '16.5k';
-        this.sld16dot5k.min = -12;
-        this.sld16dot5k.max = 12;
-        this.sld16dot5k.value = this._data['16.5k'];
-
-        this.span32.id = 'val32hz';
-        this.span32.textContent = this._data['32hz'] + ' dB';
-        this.span64.id = 'val64hz';
-        this.span64.textContent = this._data['64hz'] + ' dB';
-        this.span130.id = 'val130hz';
-        this.span130.textContent = this._data['130hz'] + ' dB';
-        this.span260.id = 'val260hz';
-        this.span260.textContent = this._data['260hz'] + ' dB';
-        this.span500.id = 'val500hz';
-        this.span500.textContent = this._data['500hz'] + ' dB';
-        this.span1k.id = 'val1k';
-        this.span1k.textContent = this._data['1k'] + ' dB';
-        this.span2k.id = 'val2k';
-        this.span2k.textContent = this._data['2k'] + ' dB';
-        this.span4k.id = 'val4k';
-        this.span4k.textContent = this._data['4k'] + ' dB';
-        this.span8dot3k.id = 'val8dot3k';
-        this.span8dot3k.textContent = this._data['8.3k'] + ' dB';
-        this.span16dot5k.id = 'val16dot5k';
-        this.span16dot5k.textContent = this._data['16.5k'] + ' dB';
-
-        this.lab32hz.htmlFor = '32hz';
-        this.lab32hz.textContent = '32 Hz';
-        this.lab64hz.htmlFor = '64hz';
-        this.lab64hz.textContent = '64 Hz';
-        this.lab130hz.htmlFor = '130hz';
-        this.lab130hz.textContent = '130 Hz';
-        this.lab260hz.htmlFor = '260hz';
-        this.lab260hz.textContent = '260 Hz';
-        this.lab500hz.htmlFor = '500hz';
-        this.lab500hz.textContent = '500 Hz';
-        this.lab1k.htmlFor = '1k';
-        this.lab1k.textContent = '1 kHz';
-        this.lab2k.htmlFor = '2k';
-        this.lab2k.textContent = '2 kHz';
-        this.lab4k.htmlFor = '4k';
-        this.lab4k.textContent = '4 kHz';
-        this.lab8dot3k.htmlFor = '8.3k';
-        this.lab8dot3k.textContent = '8.3 kHz';
-        this.lab16dot5k.htmlFor = '16.5k';
-        this.lab16dot5k.textContent = '16.5 kHz';
 
         // armado de la tabla que servira de estructura del EQ
         this.table = document.createElement('table');
@@ -228,85 +150,80 @@ class Equalizer extends HTMLElement
 
         let row1 = this.table.insertRow();
         let col01 = row1.insertCell();
-        col01.appendChild(this.lab32hz);
-        let col1 = row1.insertCell();
-        col1.appendChild(this.sld32hz);
-        let col2 = row1.insertCell();
-        col2.appendChild(this.span32);
+        col1.appendChild(this.sld32hz.bloque);
 
         let row2 = this.table.insertRow();
         let col02 = row2.insertCell();
-        col02.appendChild(this.lab64hz);
+        col02.appendChild(this.sld64hz.bloque);
         let col3 = row2.insertCell();
         col3.appendChild(this.sld64hz);
         let col4 = row2.insertCell();
-        col4.appendChild(this.span64);
+        col4.appendChild(this.sld64hz.span);
 
         let row3 = this.table.insertRow();
         let col03 = row3.insertCell();
-        col03.appendChild(this.lab130hz);
+        col03.appendChild(this.sld130hz.bloque);
         let col5 = row3.insertCell();
         col5.appendChild(this.sld130hz);
         let col6 = row3.insertCell();
-        col6.appendChild(this.span130);
+        col6.appendChild(this.sld130hz.span);
 
         let row4 = this.table.insertRow();
         let col04 = row4.insertCell();
-        col04.appendChild(this.lab260hz);
+        col04.appendChild(this.sld260hz.bloque);
         let col7 = row4.insertCell();
         col7.appendChild(this.sld260hz);
         let col8 = row4.insertCell();
-        col8.appendChild(this.span260);
+        col8.appendChild(this.sld260hz.span);
 
         let row5 = this.table.insertRow();
         let col05 = row5.insertCell();
-        col05.appendChild(this.lab500hz);
+        col05.appendChild(this.sld500hz.label);
         let col9 = row5.insertCell();
         col9.appendChild(this.sld500hz);
         let col10 = row5.insertCell();
-        col10.appendChild(this.span500);
+        col10.appendChild(this.sld500hz.span);
 
         let row6 = this.table.insertRow();
         let col06 = row6.insertCell();
-        col06.appendChild(this.lab1k);
+        col06.appendChild(this.sld1k.label);
         let col11 = row6.insertCell();
         col11.appendChild(this.sld1k);
         let col12 = row6.insertCell();
-        col12.appendChild(this.span1k);
+        col12.appendChild(this.sld1k.span);
 
         let row7 = this.table.insertRow();
         let col07 = row7.insertCell();
-        col07.appendChild(this.lab2k);
+        col07.appendChild(this.sld2k.label);
         let col13 = row7.insertCell();
         col13.appendChild(this.sld2k);
         let col14 = row7.insertCell();
-        col14.appendChild(this.span2k);
+        col14.appendChild(this.sld2k.span);
 
         let row8 = this.table.insertRow();
         let col08 = row8.insertCell();
-        col08.appendChild(this.lab4k);
+        col08.appendChild(this.sld4k.label);
         let col15 = row8.insertCell();
         col15.appendChild(this.sld4k);
         let col16 = row8.insertCell();
-        col16.appendChild(this.span4k);
+        col16.appendChild(this.sld4k.span);
 
         let row9 = this.table.insertRow();
         let col09 = row9.insertCell();
-        col09.appendChild(this.lab8dot3k);
+        col09.appendChild(this.sld8dot3k.label);
         let col17 = row9.insertCell();
         col17.appendChild(this.sld8dot3k);
         let col18 = row9.insertCell();
-        col18.appendChild(this.span8dot3k);
-        
+        col18.appendChild(this.sld8dot3k.span);
+
         let row10 = this.table.insertRow();
         let col010 = row10.insertCell();
-        col010.appendChild(this.lab16dot5k);
+        col010.appendChild(this.sld16dot5k.label);
         let col19 = row10.insertCell();
         col19.appendChild(this.sld16dot5k);
         let col20 = row10.insertCell();
-        col20.appendChild(this.span16dot5k);
-        
-        
+        col20.appendChild(this.sld16dot5k.span);
+
         let col21 = row1.insertCell();
         col21.appendChild(this.btnOk);
         let col22 = row1.insertCell();
@@ -336,7 +253,7 @@ class Equalizer extends HTMLElement
         this.appendChild(this.uptitle);
         this.appendChild(this.table);
 
-        // Escuchar los cambios en los sliders
+        /* Escuchar los cambios en los sliders
         this.sld32hz.oninput = () => {
             this._data['32hz'] = this.sld32hz.value;
             this.span32.textContent = this.sld32hz.value + ' dB';
@@ -377,6 +294,7 @@ class Equalizer extends HTMLElement
             this._data['16.5k'] = this.sld16dot5k.value;
             this.span16dot5k.textContent = this.sld16dot5k.value + ' dB';
         };
+        */
 
     }
 

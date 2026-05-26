@@ -1,0 +1,250 @@
+ 
+
+
+<!--
+consigna
+5A. Desarrolle un WebComponent tipo "Formulario" que le permita cargar toda la información pertinente de la factura de
+AFIP adjuntada. Este WebComponent deberá tener un botón "Generar factura" que deberá abrir una pestaña nueva con una 
+gráfica del diseño de la factura solicitada.
+
+-->
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Ejercicio 5 — Factura</title>
+
+	<style>
+	
+    </style>
+	
+    <script>
+	class Formulario extends HTMLElement 
+    {
+		constructor()
+        {
+			super();
+		
+			
+			this.uptitle = document.createElement('h1');
+			this.uptitle.innerText = 'Factura AFIP';
+
+			
+            // Datos del emisor
+
+            this.razonSocial = document.createElement('input');
+            this.domiciloComercial = document.createElement('input');
+            this.condfrenteIVA = document.createElement('input');
+
+            var tipoDeFactura = 'B';
+            var tipoFactura = document.createElement('div');
+            tipoFactura.textContent = tipoDeFactura;
+            this.tipoFactura = tipoFactura;
+
+
+            
+            var labelRazonSocial = document.createElement('label');
+            labelRazonSocial.textContent = 'Razon social';
+            labelRazonSocial.appendChild(this.razonSocial);
+
+            var labelDomicilio = document.createElement('label');
+            labelDomicilio.textContent = 'Domicilio comercial';
+            labelDomicilio.appendChild(this.domiciloComercial);
+
+            var labelCondFrente = document.createElement('label');
+            labelCondFrente.textContent = 'Condicion frente al IVA';
+            labelCondFrente.appendChild(this.condfrenteIVA);
+
+            // grupo: emisor
+            this.groupEmisor = document.createElement('div');
+            this.groupEmisor.appendChild(labelRazonSocial);
+            this.groupEmisor.appendChild(labelDomicilio);
+            this.groupEmisor.appendChild(labelCondFrente);
+
+
+            
+            // Datos de la factura
+            this.inputFactura = document.createElement('div');
+
+            this.ptoVenta = document.createElement('input');
+            this.compNro = document.createElement('input');
+            this.fechaEmision = document.createElement('input');
+
+            this.cuit = document.createElement('input');
+            this.ingresoBrutos = document.createElement('input');
+            this.fechaInicioActividades = document.createElement('input');
+
+            var labelPto = document.createElement('label');
+            labelPto.textContent = 'Punto de venta';
+            labelPto.appendChild(this.ptoVenta);
+            
+            var labelComp = document.createElement('label');
+            labelComp.textContent = 'Comp Nro';
+            labelComp.appendChild(this.compNro);
+            var labelFecha = document.createElement('label');
+            labelFecha.textContent = 'Fecha de emision';
+            labelFecha.appendChild(this.fechaEmision);
+            var labelCUIT = document.createElement('label');
+            labelCUIT.textContent = 'CUIT';
+            labelCUIT.appendChild(this.cuit);
+            var labelIB = document.createElement('label');
+            labelIB.textContent = 'Ingreso brutos';
+            labelIB.appendChild(this.ingresoBrutos);
+            var labelFIA = document.createElement('label');
+            labelFIA.textContent = 'Fecha inicio actividades';
+            labelFIA.appendChild(this.fechaInicioActividades);
+
+            // grupo: tipo de factura (pto/comp/fecha)
+            this.groupTipoFactura = document.createElement('div');
+            this.groupTipoFactura.appendChild(tipoFactura);
+            
+            
+            // grupo: datos del emisor adicionales (CUIT, ingreso brutos, fecha inicio)
+            this.groupEmisorExtras = document.createElement('div');
+            
+
+            this.groupEmisorExtras.appendChild(labelCUIT);
+            this.groupEmisorExtras.appendChild(labelIB);
+            this.groupEmisorExtras.appendChild(labelFIA);
+
+            // Periodo de facturacion
+
+            this.inputPeriodoFacturacion = document.createElement('div');
+
+            this.periodoFactDesde = document.createElement('input');
+
+            this.periodoFactHasta = document.createElement('input');
+
+            this.fechaVencimiento = document.createElement('input');
+
+            var labelPerDesde = document.createElement('label');
+            labelPerDesde.textContent = 'Periodo facturacion Desde';
+            labelPerDesde.appendChild(this.periodoFactDesde);
+            var labelPerHasta = document.createElement('label');
+            labelPerHasta.textContent = 'Periodo facturacion Hasta';
+            labelPerHasta.appendChild(this.periodoFactHasta);
+            var labelVto = document.createElement('label');
+            labelVto.textContent = 'Fecha de Vto. para el pago';
+            labelVto.appendChild(this.fechaVencimiento);
+
+            // grupo: periodo de facturacion
+            this.groupPeriodo = document.createElement('div');
+            this.groupPeriodo.appendChild(labelPerDesde);
+            this.groupPeriodo.appendChild(labelPerHasta);
+            this.groupPeriodo.appendChild(labelVto);
+
+
+            // datos del cliente
+
+            this.inputCliente = document.createElement('div');
+
+            this.cuitCliente = document.createElement('input');
+            this.razonSocialCliente = document.createElement('input');
+            this.condFrenteIVACliente = document.createElement('input');
+            this.domicilioCliente = document.createElement('input');
+            this.condicionVenta = document.createElement('input');
+
+            var labelCuitCl = document.createElement('label');
+            labelCuitCl.textContent = 'CUIT:';
+            labelCuitCl.appendChild(this.cuitCliente);
+            var labelRazonCl = document.createElement('label');
+            labelRazonCl.textContent = 'Apellido y Nombre / Razon social:';
+            labelRazonCl.appendChild(this.razonSocialCliente);
+            var labelCondIVACl = document.createElement('label');
+            labelCondIVACl.textContent = 'Condicion frente al IVA:';
+            labelCondIVACl.appendChild(this.condFrenteIVACliente);
+            var labelDomCl = document.createElement('label');
+            labelDomCl.textContent = 'Domicilio:';
+            labelDomCl.appendChild(this.domicilioCliente);
+            var labelCondVtaCl = document.createElement('label');
+            labelCondVtaCl.textContent = 'Condicion de venta:';
+            labelCondVtaCl.appendChild(this.condicionVenta);
+
+            // grupo: datos del cliente
+            this.groupCliente = document.createElement('div');
+            this.groupCliente.className = 'group-cliente';
+            this.groupCliente.appendChild(labelCuitCl);
+            this.groupCliente.appendChild(labelRazonCl);
+            this.groupCliente.appendChild(labelCondIVACl);
+            this.groupCliente.appendChild(labelDomCl);
+            this.groupCliente.appendChild(labelCondVtaCl);
+
+			
+            this.appendChild(this.uptitle);
+
+            // tabla de layout sencilla para posicionar secciones
+            var formatoFactura = document.createElement('table');
+            var ltBody = document.createElement('tbody');
+
+            // fila 1: emisor | tipo de factura
+            var row1 = document.createElement('tr');
+            var cell11 = document.createElement('td'); cell11.appendChild(this.groupEmisor);
+            var cell12 = document.createElement('td'); cell12.appendChild(this.groupTipoFactura);
+            var cell13 = document.createElement('td'); cell13.rowSpan = 2; cell13.appendChild(this.groupEmisorExtras);
+            row1.appendChild(cell11); row1.appendChild(cell12); row1.appendChild(cell13); ltBody.appendChild(row1);
+
+            // fila 2: cliente
+            var row2 = document.createElement('tr');
+            var cell21 = document.createElement('td'); cell21.appendChild(this.groupCliente);
+            row2.appendChild(cell21); ltBody.appendChild(row2);
+
+            // fila 3: periodo (ancho completo)
+            var row3 = document.createElement('tr');
+            var cell31 = document.createElement('td'); cell31.colSpan = 2; cell31.appendChild(this.groupPeriodo);
+            row3.appendChild(cell31); ltBody.appendChild(row3);
+
+            formatoFactura.appendChild(ltBody);
+            var btnAgregarArticulo = document.createElement('button');
+            btnAgregarArticulo.textContent = 'Agregar articulo';
+            formatoFactura.appendChild(btnAgregarArticulo);
+            this.appendChild(formatoFactura);
+
+            // grupo: articulos
+
+            this.groupArticulos = document.createElement('div');
+            var tbl = document.createElement('table');
+            this.groupArticulos.appendChild(tbl);
+            this.appendChild(this.groupArticulos);
+
+            // grupo: total
+            this.groupTotal = document.createElement('div');
+            var lblTotal = document.createElement('div');
+            lblTotal.textContent = 'TOTAL: ';
+            var cuentaTotal = document.createElement('text');
+            cuentaTotal.textContent = '0.00';
+            lblTotal.appendChild(cuentaTotal);
+
+            this.groupTotal.appendChild(lblTotal);
+            this.appendChild(this.groupTotal);
+		
+        //TODO: agregar los articulos y calcular el total
+        function onclickAgregarArticulo()
+        {}    
+	}
+
+		connectedCallback(){
+		onbtnClickAgregarArticulo = this.onclickAgregarArticulo.bind(this);
+		}
+
+		disconnectedCallback(){
+            onbtnClickAgregarArticulo = null;
+		}
+	}
+
+customElements.define('x-formulario', Formulario);
+
+function main()
+    {
+	const formulario = new Formulario();
+	document.body.appendChild(formulario);
+    }
+
+window.onload = main;
+</script>
+
+</head>
+<body>
+</body>
+</html>
+

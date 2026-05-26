@@ -1,0 +1,14 @@
+[
+  { "month": "Ene", "values": { "temp_max_abs": 42.4, "temp_max_avg": 26.3, "temp_avg": 20.3, "temp_min_avg": 14.3, "precip_mm": 100.1, "sun_hours": 288.3, "humidity": 76 } },
+  { "month": "Feb", "values": { "temp_max_abs": 38.1, "temp_max_avg": 25.8, "temp_avg": 19.9, "temp_min_avg": 14.1, "precip_mm": 72.8, "sun_hours": 234.5, "humidity": 77 } },
+  { "month": "Mar", "values": { "temp_max_abs": 36.3, "temp_max_avg": 23.7, "temp_avg": 18.0, "temp_min_avg": 12.5, "precip_mm": 107.0, "sun_hours": 232.5, "humidity": 79 } },
+  { "month": "Abr", "values": { "temp_max_abs": 32.5, "temp_max_avg": 20.5, "temp_avg": 14.6, "temp_min_avg": 9.1, "precip_mm": 73.3, "sun_hours": 195.0, "humidity": 81 } },
+  { "month": "May", "values": { "temp_max_abs": 27.4, "temp_max_avg": 18.4, "temp_avg": 11.3, "temp_min_avg": 6.4, "precip_mm": 73.5, "sun_hours": 167.4, "humidity": 83 } },
+  { "month": "Jun", "values": { "temp_max_abs": 22.2, "temp_max_avg": 13.1, "temp_avg": 8.5, "temp_min_avg": 4.1, "precip_mm": 54.9, "sun_hours": 120.0, "humidity": 83 } },
+  { "month": "Jul", "values": { "temp_max_abs": 27.7, "temp_max_avg": 14.4, "temp_avg": 8.1, "temp_min_avg": 3.8, "precip_mm": 58.9, "sun_hours": 127.1, "humidity": 83 } },
+  { "month": "Ago", "values": { "temp_max_abs": 27.8, "temp_max_avg": 14.0, "temp_avg": 8.9, "temp_min_avg": 4.0, "precip_mm": 60.4, "sun_hours": 164.3, "humidity": 80 } },
+  { "month": "Sep", "values": { "temp_max_abs": 28.4, "temp_max_avg": 15.2, "temp_avg": 10.3, "temp_min_avg": 5.3, "precip_mm": 83.4, "sun_hours": 174.0, "humidity": 77 } },
+  { "month": "Oct", "values": { "temp_max_abs": 34.4, "temp_max_avg": 19.1, "temp_avg": 13.1, "temp_min_avg": 7.6, "precip_mm": 75.3, "sun_hours": 210.8, "humidity": 77 } },
+  { "month": "Nov", "values": { "temp_max_abs": 35.7, "temp_max_avg": 21.7, "temp_avg": 15.9, "temp_min_avg": 10.1, "precip_mm": 104.0, "sun_hours": 222.0, "humidity": 78 } },
+  { "month": "Dic", "values": { "temp_max_abs": 39.4, "temp_max_avg": 24.4, "temp_avg": 18.5, "temp_min_avg": 12.7, "precip_mm": 92.3, "sun_hours": 269.7, "humidity": 80 } }
+]
