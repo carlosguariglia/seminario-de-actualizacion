@@ -1,146 +1,104 @@
+<!--- hecho con IA para ver como maneja la visualizacion y armado de tablas
+--->
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Datos meteorológicos — Mar del Plata</title>
+  <title>Datos meteorológicos — Mar del Plata (simplificado)</title>
   <style>
     body { font-family: system-ui, Arial, sans-serif; margin: 16px; }
     h1 { text-align:center; }
     .table-container { overflow:auto; }
-    table.weather-table { border-collapse: collapse; width: 100%; max-width: 1200px; margin: 0 auto; }
+    table.weather-table { border-collapse: collapse; width: 100%; max-width: 900px; margin: 0 auto; }
     table.weather-table th, table.weather-table td { border: 1px solid #ddd; padding: 6px 8px; text-align: right; }
     table.weather-table th:first-child, table.weather-table td:first-child { text-align: left; font-weight: 600; }
     table.weather-table thead th { background:#f7f7f7; }
-    table.weather-table tfoot td { font-weight:700; }
     .note { font-size: 0.85rem; color:#444; text-align:center; margin-top:8px; }
   </style>
-</head>
-<body>
-  <h1>Parámetros climáticos promedio — Mar del Plata</h1>
-  <datos-meteorologicos src="datos.json"></datos-meteorologicos>
-  <div class="note">Fuente: ejemplo de datos</div>
-
+  
   <script>
-    // Helpers
-    function averageArray(arr) {
-      var sum = 0; var count = 0;
-      for (var i = 0; i < arr.length; i++) {
-        var n = Number(arr[i]);
-        if (!Number.isNaN(n)) { sum += n; count += 1; }
-      }
-      return count ? +(sum / count).toFixed(2) : '';
+    const LABELS = {
+      temp_max_abs: 'Temp. máx. abs (°C)',
+      temp_max_avg: 'Temp. máx. media (°C)',
+      temp_avg: 'Temp. media (°C)',
+      temp_min_avg: 'Temp. mín. media (°C)',
+      precip_mm: 'Precip. total (mm)',
+      sun_hours: 'Horas de sol',
+      humidity: 'Humedad (%)'
+    };
+
+    function average(values) {
+      var nums = values.map(function(v) { return Number(v); }).filter(function(n) { return !Number.isNaN(n); });
+      if (!nums.length) return '';
+      return (nums.reduce(function(a, b) { return a + b; }, 0) / nums.length).toFixed(2);
     }
 
-    function buildRowsFromMonths(data) {
-      var rows = [];
-      if (!data || data.length === 0) { return rows; }
-      var paramKeys = [];
-      for (var k in data[0].values) { if (Object.prototype.hasOwnProperty.call(data[0].values, k)) { paramKeys.push(k); } }
-      for (var i = 0; i < paramKeys.length; i++) {
-        var key = paramKeys[i];
-        var row = { key: key, metric: key, values: [] };
-        for (var m = 0; m < data.length; m++) { var v = data[m].values[key]; row.values.push(v == null ? null : v); }
-        rows.push(row);
-      }
-      return rows;
-    }
+    function renderTable(container, data) {
+      if (!Array.isArray(data) || data.length === 0) { container.textContent = 'No hay datos.'; return; }
 
-    function getMonthNames(data) { var names = []; for (var i = 0; i < data.length; i++) { names.push(data[i].month); } return names; }
+      var months = data.map(function(d) { return d.month; });
+      var keys = Object.keys(data[0].values || {});
 
-    function buildTableFromMonthJSON(data) {
-      var months = getMonthNames(data);
-      var rows = buildRowsFromMonths(data);
-      var table = document.createElement('table'); table.className = 'weather-table';
-      var thead = document.createElement('thead'); var headRow = document.createElement('tr'); var thLabel = document.createElement('th'); thLabel.textContent = 'Parámetro'; thLabel.style.textAlign = 'left'; headRow.appendChild(thLabel);
-      for (var i = 0; i < months.length; i++) { var th = document.createElement('th'); th.textContent = months[i]; headRow.appendChild(th); }
-      var thAnnual = document.createElement('th'); thAnnual.textContent = 'Anual'; headRow.appendChild(thAnnual); thead.appendChild(headRow); table.appendChild(thead);
+      var table = document.createElement('table');
+      table.className = 'weather-table';
+      var thead = document.createElement('thead');
+      thead.innerHTML = '<tr><th>Parámetro</th>' + months.map(function(m) { return '<th>' + m + '</th>'; }).join('') + '<th>Anual</th></tr>';
+      table.appendChild(thead);
+
       var tbody = document.createElement('tbody');
-      for (var r = 0; r < rows.length; r++) {
-        var row = rows[r]; var tr = document.createElement('tr'); var tdLabelRow = document.createElement('td'); tdLabelRow.textContent = row.metric; tr.appendChild(tdLabelRow);
-        for (var c = 0; c < row.values.length; c++) { var td = document.createElement('td'); td.textContent = row.values[c] == null ? '' : row.values[c]; tr.appendChild(td); }
-        var tdAnnual = document.createElement('td'); tdAnnual.textContent = averageArray(row.values); tr.appendChild(tdAnnual); tbody.appendChild(tr);
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var values = data.map(function(d) { return (d.values && d.values[key] != null) ? d.values[key] : ''; });
+        var tr = document.createElement('tr');
+        var label = LABELS[key] || key;
+        var tdsArray = ['<td>' + label + '</td>'].concat(values.map(function(v) { return '<td>' + v + '</td>'; })).concat(['<td style="font-weight:700">' + average(values) + '</td>']);
+        tr.innerHTML = tdsArray.join('');
+        tbody.appendChild(tr);
       }
+
       table.appendChild(tbody);
-      return table;
+      container.innerHTML = '';
+      container.appendChild(table);
     }
 
-    // Clase DatosMeteorologicos (estilo similar a Calculator)
     class DatosMeteorologicos extends HTMLElement {
       constructor() {
         super();
         this._container = document.createElement('div');
         this._container.className = 'table-container';
         this.appendChild(this._container);
-
-        this._labels = {
-          temp_max_abs: 'Temp. máx. abs (°C)',
-          temp_max_avg: 'Temp. máx. media (°C)',
-          temp_avg: 'Temp. media (°C)',
-          temp_min_avg: 'Temp. mín. media (°C)',
-          precip_mm: 'Precip. total (mm)',
-          sun_hours: 'Horas de sol',
-          humidity: 'Humedad (%)'
-        };
+        this._labels = LABELS;
         this._data = null;
-        this._table = null;
       }
 
       connectedCallback() {
         var src = this.getAttribute('src');
+        var self = this;
         if (src) {
-          var self = this;
-          fetch(src).then(function(resp) { return resp.json(); }).then(function(data) { self.data = data; }).catch(function(err) { self._container.textContent = 'Error cargando datos: ' + err; });
-        } else if (this._data) { this.render(); }
-      }
-
-      disconnectedCallback() {
-        // limpiar si fuera necesario
-      }
-
-      set data(value) { this._data = Array.isArray(value) ? value : []; this.render(); }
-      get data() { return this._data; }
-
-      render() {
-        if (!this._container) return;
-        if (!this._data || this._data.length === 0) { this._container.textContent = 'No hay datos.'; return; }
-        this._container.innerHTML = '';
-        var months = getMonthNames(this._data);
-        var rows = buildRowsFromMonths(this._data);
-        var table = document.createElement('table'); table.className = 'weather-table';
-
-        // thead
-        var thead = document.createElement('thead'); var headRow = document.createElement('tr');
-        var thLabel = document.createElement('th'); thLabel.textContent = 'Parámetro'; thLabel.style.textAlign = 'left'; headRow.appendChild(thLabel);
-        for (var i = 0; i < months.length; i++) { var th = document.createElement('th'); th.textContent = months[i]; headRow.appendChild(th); }
-        var thAnnual = document.createElement('th'); thAnnual.textContent = 'Anual'; headRow.appendChild(thAnnual);
-        thead.appendChild(headRow); table.appendChild(thead);
-
-        var tbody = document.createElement('tbody');
-        for (var r = 0; r < rows.length; r++) {
-          var row = rows[r]; var tr = document.createElement('tr');
-          var tdLabelRow = document.createElement('td'); tdLabelRow.textContent = this._labels[row.key] || row.metric; tr.appendChild(tdLabelRow);
-          for (var c = 0; c < row.values.length; c++) { var td = document.createElement('td'); td.textContent = row.values[c] == null ? '' : row.values[c]; tr.appendChild(td); }
-          var tdAnnual = document.createElement('td'); tdAnnual.textContent = averageArray(row.values); tdAnnual.style.fontWeight = '700'; tr.appendChild(tdAnnual);
-          tbody.appendChild(tr);
+          fetch(src).then(function(r) { return r.json(); }).then(function(d) { self.data = d; }).catch(function() { self._container.textContent = 'Error cargando datos.'; });
+        } else if (this._data) {
+          this.render();
         }
-        table.appendChild(tbody);
-        this._container.appendChild(table);
-        this._table = table;
       }
 
-      _averageArray(arr) { return averageArray(arr); }
+      get data() { return this._data; }
+      set data(value) { this._data = Array.isArray(value) ? value : []; this.render(); }
 
-      getAllAverages() {
-        var res = {};
-        if (!this._data || this._data.length === 0) return res;
-        var rows = buildRowsFromMonths(this._data);
-        for (var i = 0; i < rows.length; i++) { res[rows[i].key] = averageArray(rows[i].values); }
-        return res;
-      }
+      render() { renderTable(this._container, this._data); }
     }
 
     customElements.define('datos-meteorologicos', DatosMeteorologicos);
+
+    function main() {
+      var myCustom = new DatosMeteorologicos();
+      myCustom.setAttribute('src', 'datos.json');
+      document.body.appendChild(myCustom);
+    }
+
+    window.onload = main;
   </script>
+</head>
+<body>
 </body>
 </html>
