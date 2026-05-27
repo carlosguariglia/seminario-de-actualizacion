@@ -38,10 +38,11 @@
     }
 
     function renderTable(container, data) {
+      /*
       if (!Array.isArray(data) || data.length === 0) {
         container.textContent = 'No hay datos.';
         return;
-      }
+      }*/
 
       var months = data.map(function(d) { return d.month; });  // aca se crea el array de los meses a partir de data
       var keys = Object.keys(data[0].values || {});   // aca se crean las keys a partir de data, se asume que todas las filas tienen las mismas keys en values
@@ -70,36 +71,36 @@
 
       // Cuerpo: for anidado y uso de appendChild en cada celda
       var tbody = document.createElement('tbody');      // el cuerpo de la tabla
-      for (var i = 0; i < keys.length; i++) 
+      for (var i = 0; i < keys.length; i++)  // se recorre el array de keys ejemplo temp_max_abs, temp_max_avg
       {
         var key = keys[i];
-        var label = LABELS[key] || key;
+        var label = LABELS[key] || key;    // se obtiene la etiqueta a mostrar definida en LABELS, si no exu¡iste se usa key
         var values = data.map(function(d) { return (d.values && d.values[key] != null) ? d.values[key] : ''; });
 
-        var tr = document.createElement('tr');
-
-        var tdLabel = document.createElement('td');
+        var tr = document.createElement('tr');     // se crea una fila por cada key, ejemplo una fila para temp_max_abs, otra para temp_max_avg, etc
+        var tdLabel = document.createElement('td');  //  se crea una celda (se esta recorriendo en forma vertical)
         tdLabel.appendChild(document.createTextNode(label));
         tr.appendChild(tdLabel);
 
         // for anidado: una celda por mes
-        for (var j = 0; j < months.length; j++) {
-          var td = document.createElement('td');
+        for (var j = 0; j < months.length; j++) 
+        {
+          var td = document.createElement('td');  // se crea una celda y se recorre el array de meses (forma horizontal)
           var text = (values[j] !== undefined && values[j] !== null) ? values[j] : '';
           td.appendChild(document.createTextNode(text));
           tr.appendChild(td);
         }
-
+        // e agrega lka celda final (anual) se llama a la funcion average para calcular
         var tdAnnual = document.createElement('td');
         tdAnnual.style.fontWeight = '700';
         tdAnnual.appendChild(document.createTextNode(average(values)));
         tr.appendChild(tdAnnual);
 
-        tbody.appendChild(tr);
+        tbody.appendChild(tr);  // se agrega la fila al body y se sigue con el for de las keys
       }
 
-      table.appendChild(tbody);
-      while (container.firstChild) container.removeChild(container.firstChild);
+      table.appendChild(tbody);  // se termino de recorrer todas las filas y se agrega el body a la tabla
+      //container.replaceChildren(table); 
       container.appendChild(table);
     }
 
