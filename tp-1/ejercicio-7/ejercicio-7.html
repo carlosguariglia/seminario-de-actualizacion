@@ -1,0 +1,110 @@
+<!--- Ejercicio 6: hecho con IA para ver como maneja la visualizacion y armado de tablas
+
+Consigna Ejercico 7:
+Extienda el WebComponent desarrollado en el punto anterior, y agregue un botón que permita alternar 
+la visualización de temperaturas de (ºC) a (ºF) y viceversa.
+
+--->
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Datos meteorológicos — Mar del Plata (simplificado)</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 16px; }
+    h1 { text-align:center; }
+    .table-container { overflow:auto; }
+    table.weather-table { border-collapse: collapse; width: 100%; max-width: 900px; margin: 0 auto; }
+    table.weather-table th, table.weather-table td { border: 1px solid #ddd; padding: 6px 8px; text-align: right; }
+    table.weather-table th:first-child, table.weather-table td:first-child { text-align: left; font-weight: 600; }
+    table.weather-table thead th { background:#f7f7f7; }
+    .note { font-size: 0.85rem; color:#444; text-align:center; margin-top:8px; }
+  </style>
+  
+  <script>
+    const LABELS = {
+      temp_max_abs: 'Temp. máx. abs (°C)',
+      temp_max_avg: 'Temp. máx. media (°C)',
+      temp_avg: 'Temp. media (°C)',
+      temp_min_avg: 'Temp. mín. media (°C)',
+      precip_mm: 'Precip. total (mm)',
+      sun_hours: 'Horas de sol',
+      humidity: 'Humedad (%)'
+    };
+
+    function average(values) {
+      var nums = values.map(function(v) { return Number(v); }).filter(function(n) { return !Number.isNaN(n); });
+      if (!nums.length) return '';
+      return (nums.reduce(function(a, b) { return a + b; }, 0) / nums.length).toFixed(2);
+    }
+
+    function renderTable(container, data) {
+      if (!Array.isArray(data) || data.length === 0) { container.textContent = 'No hay datos.'; return; }
+
+      var months = data.map(function(d) { return d.month; });
+      var keys = Object.keys(data[0].values || {});
+
+      var table = document.createElement('table');
+      table.className = 'weather-table';
+      var thead = document.createElement('thead');
+      thead.innerHTML = '<tr><th>Parámetro</th>' + months.map(function(m) { return '<th>' + m + '</th>'; }).join('') + '<th>Anual</th></tr>';
+      table.appendChild(thead);
+
+      var tbody = document.createElement('tbody');
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var values = data.map(function(d) { return (d.values && d.values[key] != null) ? d.values[key] : ''; });
+        var tr = document.createElement('tr');
+        var label = LABELS[key] || key;
+        var tdsArray = ['<td>' + label + '</td>'].concat(values.map(function(v) { return '<td>' + v + '</td>'; })).concat(['<td style="font-weight:700">' + average(values) + '</td>']);
+        tr.innerHTML = tdsArray.join('');
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+      container.innerHTML = '';
+      container.appendChild(table);
+    }
+
+    class DatosMeteorologicos extends HTMLElement {
+      constructor() {
+        super();
+        this._container = document.createElement('div');
+        this._container.className = 'table-container';
+        this.appendChild(this._container);
+        this._labels = LABELS;
+        this._data = null;
+      }
+
+      connectedCallback() {
+        var src = this.getAttribute('src');
+        var self = this;
+        if (src) {
+          fetch(src).then(function(r) { return r.json(); }).then(function(d) { self.data = d; }).catch(function() { self._container.textContent = 'Error cargando datos.'; });
+        } else if (this._data) {
+          this.render();
+        }
+      }
+
+      get data() { return this._data; }
+      set data(value) { this._data = Array.isArray(value) ? value : []; this.render(); }
+
+      render() { renderTable(this._container, this._data); }
+    }
+
+    customElements.define('datos-meteorologicos', DatosMeteorologicos);
+
+    function main() {
+      var myCustom = new DatosMeteorologicos();
+      myCustom.setAttribute('src', 'datos.json');
+      document.body.appendChild(myCustom);
+    }
+
+    window.onload = main;
+  </script>
+</head>
+<body>
+</body>
+</html>
