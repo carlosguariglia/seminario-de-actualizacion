@@ -38,7 +38,7 @@ class calculatorView extends HTMLElement
 
         // Crear el título de la calculadora (aca se crea el titulo que estaba en H1)
         this.uptitle = document.createElement('h1');
-        this.uptitle.innerText = 'Calculadora';
+        this.uptitle.innerText = 'Calculadora MVC';
 
 
         // Crear los elementos de la calculadora
@@ -322,44 +322,27 @@ class calculatorModel extends EventTarget
 {
     constructor()
             {
-            super();
-            this.result = 0;
-            }
-            
-            set result(new_result)
-            {
-            if (this._result !== new_result)
-            {
-            this._result = new_result;
-            this.changed();
-            }
-            }
-            
-            get result()
-            {
-            return this._result;
-            }
+                super();
+                this.result = 0;
+                }
 
-            evalResult(digit)
-            {   
-            try
-            {   const result = eval(digit);
-                return result;    
-            }
-            catch (error)
-            {
-            
-            }
-    }
+                evalResult(digit)
+                {   
+                    try
+                    {   const result = eval(digit);
+                        return result;    
+                    }
+                    catch (error)
+                    {
+                    return 'Error';
+                    }
+                }       
 
-
-
-            changed()
-            {
-            this.dispatchEvent(new CustomEvent('changed'));
+                changed()
+                {
+                this.dispatchEvent(new CustomEvent('changed'));
+                }
             }
-            }
-
 
 
 class calculatorController
