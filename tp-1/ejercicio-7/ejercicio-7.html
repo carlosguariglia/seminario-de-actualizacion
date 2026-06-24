@@ -5,14 +5,17 @@ Extienda el WebComponent desarrollado en el punto anterior, y agregue un botón 
 la visualización de temperaturas de (ºC) a (ºF) y viceversa.
 
 --->
-
+<!--- hecho con IA para ver como maneja la visualizacion y armado de tablas
+--->
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
+  <!-- Datos ahora hardcodeados en el constructor del componente -->
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Datos meteorológicos — Mar del Plata (simplificado)</title>
   <style>
+    /* 
     body { font-family: system-ui, Arial, sans-serif; margin: 16px; }
     h1 { text-align:center; }
     .table-container { overflow:auto; }
@@ -21,6 +24,7 @@ la visualización de temperaturas de (ºC) a (ºF) y viceversa.
     table.weather-table th:first-child, table.weather-table td:first-child { text-align: left; font-weight: 600; }
     table.weather-table thead th { background:#f7f7f7; }
     .note { font-size: 0.85rem; color:#444; text-align:center; margin-top:8px; }
+  */
   </style>
   
   <script>
@@ -41,30 +45,69 @@ la visualización de temperaturas de (ºC) a (ºF) y viceversa.
     }
 
     function renderTable(container, data) {
-      if (!Array.isArray(data) || data.length === 0) { container.textContent = 'No hay datos.'; return; }
+      /*
+      if (!Array.isArray(data) || data.length === 0) {
+        container.textContent = 'No hay datos.';
+        return;
+      }*/
 
-      var months = data.map(function(d) { return d.month; });
-      var keys = Object.keys(data[0].values || {});
+      var months = data.map(function(d) { return d.month; });  // aca se crea el array de los meses a partir de data
+      var keys = Object.keys(data[0].values || {});   // aca se crean las keys a partir de data, se asume que todas las filas tienen las mismas keys en values
 
       var table = document.createElement('table');
-      table.className = 'weather-table';
-      var thead = document.createElement('thead');
-      thead.innerHTML = '<tr><th>Parámetro</th>' + months.map(function(m) { return '<th>' + m + '</th>'; }).join('') + '<th>Anual</th></tr>';
-      table.appendChild(thead);
 
-      var tbody = document.createElement('tbody');
-      for (var i = 0; i < keys.length; i++) {
+      // Cabecera  thead, th es un elemento cabecera es como td pero para cabecera, td es para datos
+      var thead = document.createElement('thead');
+      var headRow = document.createElement('tr');
+      var thParam = document.createElement('th');
+      thParam.appendChild(document.createTextNode('Parámetro'));
+      headRow.appendChild(thParam);
+      for (var m = 0; m < months.length; m++)    // se recorre el array de months
+      {
+        var th = document.createElement('th');                
+        th.appendChild(document.createTextNode(months[m]));       
+        headRow.appendChild(th);                            // se va agregando un elemento th en la row de cabecera
+      }
+      var thAnual = document.createElement('th');
+      thAnual.appendChild(document.createTextNode('Anual'));    // se pone el texto Anual en el ultimo th de la cabecera
+      headRow.appendChild(thAnual);
+      thead.appendChild(headRow);
+      table.appendChild(thead);   
+
+      // hasta aca  se agrego al DOM la cabecera de la tabala (Paramentro, Ene, Feb, Mar, ..., Dic, Anual)
+
+      // Cuerpo: for anidado y uso de appendChild en cada celda
+      var tbody = document.createElement('tbody');      // el cuerpo de la tabla
+      for (var i = 0; i < keys.length; i++)  // se recorre el array de keys ejemplo temp_max_abs, temp_max_avg
+      {
         var key = keys[i];
+        var label = LABELS[key] || key;    // se obtiene la etiqueta a mostrar definida en LABELS, si no exu¡iste se usa key
         var values = data.map(function(d) { return (d.values && d.values[key] != null) ? d.values[key] : ''; });
-        var tr = document.createElement('tr');
-        var label = LABELS[key] || key;
-        var tdsArray = ['<td>' + label + '</td>'].concat(values.map(function(v) { return '<td>' + v + '</td>'; })).concat(['<td style="font-weight:700">' + average(values) + '</td>']);
-        tr.innerHTML = tdsArray.join('');
-        tbody.appendChild(tr);
+
+        var tr = document.createElement('tr');     // se crea una fila por cada key, ejemplo una fila para temp_max_abs, otra para temp_max_avg, etc
+        var tdLabel = document.createElement('td');  //  se crea una celda (se esta recorriendo en forma vertical)
+        tdLabel.appendChild(document.createTextNode(label));
+        tr.appendChild(tdLabel);
+
+        // for anidado: una celda por mes
+        for (var j = 0; j < months.length; j++) 
+        {
+          var td = document.createElement('td');  // se crea una celda y se recorre el array de meses (forma horizontal)
+          var text = (values[j] !== undefined && values[j] !== null) ? values[j] : '';
+          td.appendChild(document.createTextNode(text));
+          tr.appendChild(td);
+        }
+        // e agrega lka celda final (anual) se llama a la funcion average para calcular
+        var tdAnnual = document.createElement('td');
+        tdAnnual.style.fontWeight = '700';
+        tdAnnual.appendChild(document.createTextNode(average(values)));
+        tr.appendChild(tdAnnual);
+
+        tbody.appendChild(tr);  // se agrega la fila al body y se sigue con el for de las keys
       }
 
-      table.appendChild(tbody);
-      container.innerHTML = '';
+      table.appendChild(tbody);  // se termino de recorrer todas las filas y se agrega el body a la tabla
+      //container.replaceChildren(table); 
       container.appendChild(table);
     }
 
@@ -72,24 +115,34 @@ la visualización de temperaturas de (ºC) a (ºF) y viceversa.
       constructor() {
         super();
         this._container = document.createElement('div');
-        this._container.className = 'table-container';
-        this.appendChild(this._container);
-        this._labels = LABELS;
-        this._data = null;
+
+        // Datos hardcodeados
+        this._data = [
+          { "month": "Ene", "values": { "temp_max_abs": 42.4, "temp_max_avg": 26.3, "temp_avg": 20.3, "temp_min_avg": 14.3, "precip_mm": 100.1, "sun_hours": 288.3, "humidity": 76 } },
+          { "month": "Feb", "values": { "temp_max_abs": 38.1, "temp_max_avg": 25.8, "temp_avg": 19.9, "temp_min_avg": 14.1, "precip_mm": 72.8, "sun_hours": 234.5, "humidity": 77 } },
+          { "month": "Mar", "values": { "temp_max_abs": 36.3, "temp_max_avg": 23.7, "temp_avg": 18.0, "temp_min_avg": 12.5, "precip_mm": 107.0, "sun_hours": 232.5, "humidity": 79 } },
+          { "month": "Abr", "values": { "temp_max_abs": 32.5, "temp_max_avg": 20.5, "temp_avg": 14.6, "temp_min_avg": 9.1, "precip_mm": 73.3, "sun_hours": 195.0, "humidity": 81 } },
+          { "month": "May", "values": { "temp_max_abs": 27.4, "temp_max_avg": 18.4, "temp_avg": 11.3, "temp_min_avg": 6.4, "precip_mm": 73.5, "sun_hours": 167.4, "humidity": 83 } },
+          { "month": "Jun", "values": { "temp_max_abs": 22.2, "temp_max_avg": 13.1, "temp_avg": 8.5, "temp_min_avg": 4.1, "precip_mm": 54.9, "sun_hours": 120.0, "humidity": 83 } },
+          { "month": "Jul", "values": { "temp_max_abs": 27.7, "temp_max_avg": 14.4, "temp_avg": 8.1, "temp_min_avg": 3.8, "precip_mm": 58.9, "sun_hours": 127.1, "humidity": 83 } },
+          { "month": "Ago", "values": { "temp_max_abs": 27.8, "temp_max_avg": 14.0, "temp_avg": 8.9, "temp_min_avg": 4.0, "precip_mm": 60.4, "sun_hours": 164.3, "humidity": 80 } },
+          { "month": "Sep", "values": { "temp_max_abs": 28.4, "temp_max_avg": 15.2, "temp_avg": 10.3, "temp_min_avg": 5.3, "precip_mm": 83.4, "sun_hours": 174.0, "humidity": 77 } },
+          { "month": "Oct", "values": { "temp_max_abs": 34.4, "temp_max_avg": 19.1, "temp_avg": 13.1, "temp_min_avg": 7.6, "precip_mm": 75.3, "sun_hours": 210.8, "humidity": 77 } },
+          { "month": "Nov", "values": { "temp_max_abs": 35.7, "temp_max_avg": 21.7, "temp_avg": 15.9, "temp_min_avg": 10.1, "precip_mm": 104.0, "sun_hours": 222.0, "humidity": 78 } },
+          { "month": "Dic", "values": { "temp_max_abs": 39.4, "temp_max_avg": 24.4, "temp_avg": 18.5, "temp_min_avg": 12.7, "precip_mm": 92.3, "sun_hours": 269.7, "humidity": 80 } }
+        ];
+
+      
       }
 
       connectedCallback() {
-        var src = this.getAttribute('src');
-        var self = this;
-        if (src) {
-          fetch(src).then(function(r) { return r.json(); }).then(function(d) { self.data = d; }).catch(function() { self._container.textContent = 'Error cargando datos.'; });
-        } else if (this._data) {
-          this.render();
-        }
+        //if (!this._container.isConnected) this.appendChild(this._container);
+        this.appendChild(this._container);
+        this.render();
       }
 
-      get data() { return this._data; }
-      set data(value) { this._data = Array.isArray(value) ? value : []; this.render(); }
+      disconnectedCallback() {
+        } 
 
       render() { renderTable(this._container, this._data); }
     }
@@ -97,12 +150,12 @@ la visualización de temperaturas de (ºC) a (ºF) y viceversa.
     customElements.define('datos-meteorologicos', DatosMeteorologicos);
 
     function main() {
-      var myCustom = new DatosMeteorologicos();
-      myCustom.setAttribute('src', 'datos.json');
-      document.body.appendChild(myCustom);
+      var elem = document.createElement('datos-meteorologicos');
+      document.body.appendChild(elem);
     }
 
     window.onload = main;
+    
   </script>
 </head>
 <body>

@@ -129,13 +129,13 @@
       }
 
       connectedCallback() {
-        if (!this._container.isConnected) this.appendChild(this._container);
+        //if (!this._container.isConnected) this.appendChild(this._container);
+        this.appendChild(this._container);
         this.render();
       }
 
       disconnectedCallback() {
-        if (this._container.isConnected) this.removeChild(this._container);
-      } 
+        } 
 
       render() { renderTable(this._container, this._data); }
     }
@@ -148,6 +148,7 @@
     }
 
     window.onload = main;
+    
   </script>
 </head>
 <body>

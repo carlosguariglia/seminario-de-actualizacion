@@ -1,0 +1,418 @@
+<!DOCTYPE html>myV
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <style>
+        table, tr, td {
+            margin: auto;
+            border: 1px solid white;
+            border-collapse: collapse;
+
+        }
+        /* Centrar el título de la calculadora */
+        h1 { text-align: center; } 
+        
+                
+        .boton-borrar { background: #ef4444; color: white; width: 100% }
+        .boton-azul { background: #3b82f6; color: white; width: 100% }
+        .boton-verde { background: #10b981; color: white; width: 100% }
+        .boton-naranja { background: #f59e0b; color: white; width: 100% }
+    </style>
+</head>
+
+
+<body>
+</body> 
+
+<script>
+
+class calculatorView extends HTMLElement 
+{
+    constructor()
+    {   
+        // Llamar al constructor de la clase padre (HTMLElement)
+        super();
+
+        // Crear el título de la calculadora (aca se crea el titulo que estaba en H1)
+        this.uptitle = document.createElement('h1');
+        this.uptitle.innerText = 'Calculadora';
+
+
+        // Crear los elementos de la calculadora
+        this.display = document.createElement('input');
+        this.btn0 = document.createElement('button');
+        this.btn1 = document.createElement('button');
+        this.btn2 = document.createElement('button');
+        this.btn3 = document.createElement('button');
+        this.btn4 = document.createElement('button');
+        this.btn5 = document.createElement('button');
+        this.btn6 = document.createElement('button');
+        this.btn7 = document.createElement('button');
+        this.btn8 = document.createElement('button');
+        this.btn9 = document.createElement('button');
+        this.btnPlus = document.createElement('button');
+        this.btnMinus = document.createElement('button');
+        this.btnMult = document.createElement('button');
+        this.btnDiv = document.createElement('button');
+        this.btnDot = document.createElement('button');
+        this.btnResult = document.createElement('button');
+        this.btnDelete = document.createElement('button');
+
+
+        // armado de la tabla que servira de estructura para la calculadora
+        this.table = document.createElement('table');
+
+        let row0 = this.table.insertRow();
+        let col0 = row0.insertCell();
+        col0.colSpan = 4;
+        col0.appendChild(this.display);    
+
+
+        let row1 = this.table.insertRow();
+        let col1 = row1.insertCell();
+        col1.appendChild(this.btn7);
+        let col2 = row1.insertCell();
+        col2.appendChild(this.btn8);
+        let col3 = row1.insertCell();
+        col3.appendChild(this.btn9);
+        let col4 = row1.insertCell();
+        col4.appendChild(this.btnPlus);
+
+        let row2 = this.table.insertRow();
+        let col5 = row2.insertCell();
+        col5.appendChild(this.btn4);
+        let col6 = row2.insertCell();
+        col6.appendChild(this.btn5);
+        let col7 = row2.insertCell();
+        col7.appendChild(this.btn6);
+        let col8 = row2.insertCell();
+        col8.appendChild(this.btnMinus);
+
+        let row3 = this.table.insertRow();
+        let col9 = row3.insertCell();
+        col9.appendChild(this.btn1);
+        let col10 = row3.insertCell();
+        col10.appendChild(this.btn2);
+        let col11 = row3.insertCell();
+        col11.appendChild(this.btn3);
+        let col12 = row3.insertCell();
+        col12.appendChild(this.btnMult);
+
+        let row4 = this.table.insertRow();
+        let col13 = row4.insertCell();
+        col13.appendChild(this.btn0);
+        let col14 = row4.insertCell();
+        col14.appendChild(this.btnDot);
+        let col15 = row4.insertCell();
+        col15.appendChild(this.btnResult);
+        let col16 = row4.insertCell();
+        col16.appendChild(this.btnDiv);
+        
+        let row5 = this.table.insertRow();
+        let col17 = row5.insertCell();
+        col17.colSpan = 4;
+        col17.appendChild(this.btnDelete);
+
+        // Preparacion de las instancias
+        
+        this.display.type = 'text';
+        this.display.readOnly = true;
+        this.display.style.textAlign = 'right';
+        this.display.value = '0';
+        
+
+        this.btn0.className = 'boton-azul';
+        this.btn0.innerText = '0';
+        
+        this.btn1.className = 'boton-azul';
+        this.btn1.innerText = '1';
+        
+        this.btn2.className = 'boton-azul';
+        this.btn2.innerText = '2';
+        this.btn2.value = '2';
+
+        this.btn3.className = 'boton-azul';
+        this.btn3.innerText = '3';
+        this.btn3.value = '3';
+        
+        this.btn4.className = 'boton-azul';
+        this.btn4.innerText = '4';
+        this.btn4.value = '4';
+
+        this.btn5.className = 'boton-azul';
+        this.btn5.innerText = '5';
+        this.btn5.value = '5';
+        
+        this.btn6.className = 'boton-azul';
+        this.btn6.innerText = '6';
+        this.btn6.value = '6';
+
+        this.btn7.className = 'boton-azul';
+        this.btn7.innerText = '7';
+        this.btn7.value = '7';
+        
+        this.btn8.className = 'boton-azul';
+        this.btn8.innerText = '8';
+        this.btn8.value = '8';
+
+        this.btn9.className = 'boton-azul';
+        this.btn9.innerText = '9';
+        this.btn9.value = '9';
+        
+        this.btnPlus.className = 'boton-verde';
+        this.btnPlus.innerText = '+';
+        this.btnPlus.value = '+';
+
+        this.btnMinus.className = 'boton-verde';
+        this.btnMinus.innerText = '-';
+        this.btnMinus.value = '-';
+
+        this.btnMult.className = 'boton-verde';
+        this.btnMult.innerText = '*';   
+        this.btnMult.value = '*';
+
+        this.btnDiv.className = 'boton-verde';
+        this.btnDiv.innerText = '/';
+        this.btnDiv.value = '/';
+
+        this.btnDot.className = 'boton-azul';
+        this.btnDot.innerText = '.';    
+        this.btnDot.value = '.';
+
+        this.btnResult.className = 'boton-naranja';
+        this.btnResult.innerText = '=';
+        this.btnResult.value = '=';
+
+        this.btnDelete.className = 'boton-borrar';
+        this.btnDelete.innerText = 'Borrar';
+        this.btnDelete.value = 'Borrar';
+
+        // Agregar los elementos al DOM  (DOM = arbol de objetos)
+        
+        // aca se agrega el titulo
+        this.appendChild(this.uptitle);
+        this.appendChild(this.table);
+
+    }
+
+    set value(text)
+    {
+    this.display.value = text;
+    }
+
+    get value()
+    {
+    return this.display.value;
+    }
+
+    checkdisplay(digit)
+    {
+        if ((this.display.value === '0') || (this.display.value === 'Error') || (this.display.value === 'undefined') || (this.display.value === 'Infinity') )
+        {
+            this.display.value = digit;
+        }
+        else
+        {
+            this.display.value += digit;
+        }
+    }
+
+    onbtn0Click() { 
+                    this.checkdisplay('0'); }
+    onbtn1Click() {
+                    this.checkdisplay('1'); }
+    onbtn2Click() {
+                    this.checkdisplay('2'); }
+    onbtn3Click() {
+                    this.checkdisplay('3'); }
+    onbtn4Click() {
+                    this.checkdisplay('4'); }
+    onbtn5Click() {
+                    this.checkdisplay('5'); }
+    onbtn6Click() {
+                    this.checkdisplay('6'); }
+    onbtn7Click() {
+                    this.checkdisplay('7'); }
+    onbtn8Click() {
+                    this.checkdisplay('8'); }
+    onbtn9Click() {
+                    this.checkdisplay('9'); }
+
+    onbtnplusClick() {
+                    this.display.value += '+'; }
+    onbtnminusClick() {
+                    this.display.value += '-'; }
+    onbtnmultClick() {
+                    this.display.value += '*'; }
+    onbtndivClick() {
+                    this.display.value += '/'; }
+    onbtndotClick() {
+                    this.checkdisplay('.'); }
+    onbtnDeleteClick() {
+                    this.display.value = '0'; }
+
+
+    connectedCallback()
+    {
+      // Botones numericos
+        this.btn0.onclick = this.onbtn0Click.bind(this);
+        this.btn1.onclick = this.onbtn1Click.bind(this);
+        this.btn2.onclick = this.onbtn2Click.bind(this);
+        this.btn3.onclick = this.onbtn3Click.bind(this);
+        this.btn4.onclick = this.onbtn4Click.bind(this);
+        this.btn5.onclick = this.onbtn5Click.bind(this);
+        this.btn6.onclick = this.onbtn6Click.bind(this);
+        this.btn7.onclick = this.onbtn7Click.bind(this);
+        this.btn8.onclick = this.onbtn8Click.bind(this);
+        this.btn9.onclick = this.onbtn9Click.bind(this);
+
+        // Botones de operaciones
+
+        this.btnPlus.onclick = this.onbtnplusClick.bind(this);
+        this.btnMinus.onclick = this.onbtnminusClick.bind(this);
+        this.btnMult.onclick = this.onbtnmultClick.bind(this);
+        this.btnDiv.onclick = this.onbtndivClick.bind(this);
+        this.btnDot.onclick = this.onbtndotClick.bind(this);
+        this.btnDelete.onclick = this.onbtnDeleteClick.bind(this);
+        this.btnResult.onclick = this.onbtnResultClick.bind(this);
+
+    }
+    
+    disconnectedCallback()
+    {
+     // Botones numericos
+        this.btn0.onclick = null;
+        this.btn1.onclick = null;
+        this.btn2.onclick = null;
+        this.btn3.onclick = null;
+        this.btn4.onclick = null;
+        this.btn5.onclick = null;
+        this.btn6.onclick = null;
+        this.btn7.onclick = null;
+        this.btn8.onclick = null;
+        this.btn9.onclick = null;
+
+        // Botones de operaciones
+
+        this.btnPlus.onclick = null;
+        this.btnMinus.onclick = null;
+        this.btnMult.onclick = null;
+        this.btnDiv.onclick = null;
+        this.btnDot.onclick = null;
+        this.btnResult.onclick = null;
+        this.btnDelete.onclick = null;
+
+    }
+    
+    onbtnResultClick()
+    {
+    this.dispatchEvent(new CustomEvent('request', { detail: 'result'}));
+    }
+
+    
+}
+
+customElements.define('x-calcview', calculatorView);
+
+
+class calculatorModel extends EventTarget
+{
+    constructor()
+            {
+            super();
+            this.result = 0;
+            }
+            
+            set result(new_result)
+            {
+            if (this._result !== new_result)
+            {
+            this._result = new_result;
+            this.changed();
+            }
+            }
+            
+            get result()
+            {
+            return this._result;
+            }
+
+            evalResult(digit)
+            {   
+            try
+            {   const result = eval(digit);
+                return result;    
+            }
+            catch (error)
+            {
+            
+            }
+    }
+
+
+
+            changed()
+            {
+            this.dispatchEvent(new CustomEvent('changed'));
+            }
+            }
+
+
+
+class calculatorController
+{
+    constructor(view, model)
+    {
+    this._view = view;
+    this._model = model;
+    this._onModelChanged = this.onModelChanged.bind(this);
+    this._onViewRequest = this.onViewRequest.bind(this);
+    }
+
+    enable()
+    {
+    this._model.addEventListener('changed', this._onModelChanged);
+    this._view.addEventListener('request', this._onViewRequest);
+    }
+
+    disable()
+    {
+    this._model.removeEventListener('changed', this._onModelChanged);
+    this._view.removeEventListener('request', this._onViewRequest);
+    }
+
+    onModelChanged()
+    {
+    console.log('El modelo está notificando un cambio...');
+    this._view.value = this._model.result;
+    }
+
+    onViewRequest(event)
+    {
+    console.log('La vista está informando que el usuario quiere guardar un dato...');
+    if (event.detail === 'result')
+    {   
+    
+    this._view.value = this._model.evalResult(this._view.value);
+
+    }
+    }
+}
+
+
+function main()
+{
+    let myModel = new calculatorModel();
+    let myView = new calculatorView();
+    let myController = new calculatorController(myView, myModel);
+    myController.enable();
+    document.body.appendChild(myView);
+}
+window.onload = main;
+
+</script>
+
+</html>

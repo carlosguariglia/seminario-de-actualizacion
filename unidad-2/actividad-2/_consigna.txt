@@ -1,0 +1,50 @@
+Contenidos a trabajar: Frontend (HTML, CSS y JS)
+Modalidad: Individual
+Formato de entrega: Repositorios GitHub carpeta "unidad-2/actividad-2"
+
+Consigna
+
+Analice el código HTML/CSS/JS proporcionado a través del repositorio GitHub. Se trata de una plantilla que representa un prototipo de panel de interfaz gráfica basada en la librería CSS (W3Schools) para una aplicación genérica. Su objetivo será construir un WebComponent bajo la arquitectura MVC. En esta primera actividad se solicitará el desarrollo de WCApplicationView como la primera abstracción del conjunto: WCApplicationView, WCApplicationController y WCApplicationModel.
+
+Estrategia de resolución
+
+1. Analice el código proporcionado en el "index.html". De todo lo que está allí, deberemos efectuar una limpieza importante y sólo dejar:
+-Barra superior con botones del lado derecho (sin barra de búsqueda)
+-Barra lateral izquierda
+-Cuerpo derecho (dejarlo vacío)
+-Pié
+-Se debe conservar todo el enlazamiento a código CSS de las etiquetas <link>
+
+2. Una vez que la plantilla "index.html" esté depurada y limpia. Comenzar a implementar la clase WCApplicationView de modo tal que el WebComponent libre de HTML permita la visualización correcta de la plantilla gráfica de la aplicación.
+
+3. Identificar que algunas etiquetas html del proyecto original, contienen manejadores embebidos que deben migrarse:
+    <div class="w3-display-right w3-padding-small w3-margin-right" onclick="this.parentNode.children[1].focus()">
+
+Por ejemplo, aquí ese atributo onclick contiene código JS que no puede estar allí. Deberá escribirse un manejador de evento acorde que contenga dicho código. Ej:   onDivClick(event){   this.parentNode.children[1].focus() }   y ser vinculado/desvinculado adecuadamente en connectedCallback / disconnectedCallback.
+
+El nombre del manejador es una sugerencia. No debe utilizar ese, sino uno que represente adecuadamente la semántica de lo que está representando.
+
+4. Como advertirá el código posee aplicación de clases CSS para diversos elementos y varias etiquetas HTML compuestas representan "un elemento significativo" en la interfaz. Este tipo de elementos deben ser encapsulados de manera acorde. Por ejemplo si observa la imagen "encapsulacion.png" todo el botón de la interfaz, está construído con un elemento 'a' y clases aplicadas. Por lo tanto:
+
+function createButtonMenu( parametros )
+{
+    let a = document.createElement('a');
+    a.classList.add( "w3-bar-item", "w3-button", "w3-padding-large", "w3-hover-text-primary" );
+
+   ///...etc...
+    
+    return  a;
+}
+
+Consideraciones:  No se debe entregar el código del proyecto adjuntado. Sólo la clase WCApplicationView solicitada.
+Si quiere utilizar una plantilla alternativa de otra procedencia, puede utilizar como segunda opción el link de w3Schools
+
+
+LINKS
+
+https://github.com/w3mix/w3admin?authuser=0
+
+
+https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_examples_material&authuser=0
+
+
