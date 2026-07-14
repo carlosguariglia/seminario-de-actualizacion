@@ -1,0 +1,419 @@
+<!--
+consigna
+5A. Desarrolle un WebComponent tipo "Formulario" que le permita cargar toda la información pertinente de la factura de
+AFIP adjuntada. Este WebComponent deberá tener un botón "Generar factura" que deberá abrir una pestaña nueva con una
+gráfica del diseño de la factura solicitada.
+
+5B. Tomando el diseño base del WebComponent elegido. Encuentre la manera de integrar un botón que permita renderizar
+la factura como PDF de manera directa. Investigue qué librería y/o funcionalidades tiene disponibles para poder
+hacer la adecuación.
+-->
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Ejercicio 5 - Factura</title>
+
+	<!-- Se usa la libreria html2pdf.js para renderizar la factura como PDF de manera directa, HTML a PDF -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+	<!--   Se le pidio a la IA que genere un mejor diseño de la factura (etiquetas style), solo con fines educativos
+	ya que la parte visual no es parte de la consigna, por tal motivo se deja comentado. se dejo un archivo PDF de ejemplo
+	
+-->
+	<style>
+		:root { 
+			color-scheme: light;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		body {
+			margin: 24px;
+			background: #f3f5f7;
+		}
+
+		x-formulario {
+			display: block;
+			max-width: 1120px;
+			margin: 0 auto;
+		}
+
+		.factura-panel {
+			background: #fff;
+			border: 1px solid #d7dde3;
+			border-radius: 12px;
+			padding: 20px;
+			box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+		}
+
+		.factura-panel h1 {
+			margin: 0 0 16px;
+			font-size: 28px;
+		}
+
+		.factura-actions {
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+			margin-top: 16px;
+		}
+
+		button {
+			border: 0;
+			border-radius: 8px;
+			padding: 10px 16px;
+			background: #0f766e;
+			color: #fff;
+			font-weight: 600;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background: #115e59;
+		}
+
+		.factura-document {
+			background: #fff;
+			padding: 12px;
+		}
+
+		.factura-layout {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		.factura-layout td {
+			vertical-align: top;
+			padding: 10px;
+			border: 1px solid #d7dde3;
+		}
+
+		.factura-layout label,
+		.group-cliente label,
+		.group-emisor label,
+		.group-periodo label,
+		.group-total,
+		.group-articulos {
+			display: block;
+			margin-bottom: 8px;
+		}
+
+		.factura-layout input {
+			width: 100%;
+			box-sizing: border-box;
+			margin-top: 4px;
+			padding: 8px 10px;
+			border: 1px solid #b9c3cd;
+			border-radius: 6px;
+		}
+
+		.total-box {
+			font-size: 18px;
+			font-weight: 700;
+		}
+	</style>
+	
+
+	<script>
+		class Formulario extends HTMLElement {
+			constructor() {
+				super();
+
+				this.panel = document.createElement('section');
+				this.panel.className = 'factura-panel';
+
+				this.uptitle = document.createElement('h1');
+				this.uptitle.textContent = 'Factura AFIP';
+				this.panel.appendChild(this.uptitle);
+
+				this.razonSocial = document.createElement('input');
+				this.domiciloComercial = document.createElement('input');
+				this.condfrenteIVA = document.createElement('input');
+
+				var labelRazonSocial = document.createElement('label');
+				labelRazonSocial.textContent = 'Razon social';
+				labelRazonSocial.appendChild(this.razonSocial);
+
+				var labelDomicilio = document.createElement('label');
+				labelDomicilio.textContent = 'Domicilio comercial';
+				labelDomicilio.appendChild(this.domiciloComercial);
+
+				var labelCondFrente = document.createElement('label');
+				labelCondFrente.textContent = 'Condicion frente al IVA';
+				labelCondFrente.appendChild(this.condfrenteIVA);
+
+				this.groupEmisor = document.createElement('div');
+				this.groupEmisor.className = 'group-emisor';
+				this.groupEmisor.appendChild(labelRazonSocial);
+				this.groupEmisor.appendChild(labelDomicilio);
+				this.groupEmisor.appendChild(labelCondFrente);
+
+				this.ptoVenta = document.createElement('input');
+				this.compNro = document.createElement('input');
+				this.fechaEmision = document.createElement('input');
+				this.cuit = document.createElement('input');
+				this.ingresoBrutos = document.createElement('input');
+				this.fechaInicioActividades = document.createElement('input');
+
+				var labelCUIT = document.createElement('label');
+				labelCUIT.textContent = 'CUIT';
+				labelCUIT.appendChild(this.cuit);
+
+				var labelIB = document.createElement('label');
+				labelIB.textContent = 'Ingreso brutos';
+				labelIB.appendChild(this.ingresoBrutos);
+
+				var labelFIA = document.createElement('label');
+				labelFIA.textContent = 'Fecha inicio actividades';
+				labelFIA.appendChild(this.fechaInicioActividades);
+
+				this.groupTipoFactura = document.createElement('div');
+				this.groupTipoFactura.textContent = 'B';
+
+				this.groupEmisorExtras = document.createElement('div');
+				this.groupEmisorExtras.className = 'group-emisor';
+				this.groupEmisorExtras.appendChild(labelCUIT);
+				this.groupEmisorExtras.appendChild(labelIB);
+				this.groupEmisorExtras.appendChild(labelFIA);
+
+				this.periodoFactDesde = document.createElement('input');
+				this.periodoFactHasta = document.createElement('input');
+				this.fechaVencimiento = document.createElement('input');
+
+				var labelPerDesde = document.createElement('label');
+				labelPerDesde.textContent = 'Periodo facturacion Desde';
+				labelPerDesde.appendChild(this.periodoFactDesde);
+
+				var labelPerHasta = document.createElement('label');
+				labelPerHasta.textContent = 'Periodo facturacion Hasta';
+				labelPerHasta.appendChild(this.periodoFactHasta);
+
+				var labelVto = document.createElement('label');
+				labelVto.textContent = 'Fecha de Vto. para el pago';
+				labelVto.appendChild(this.fechaVencimiento);
+
+				this.groupPeriodo = document.createElement('div');
+				this.groupPeriodo.className = 'group-periodo';
+				this.groupPeriodo.appendChild(labelPerDesde);
+				this.groupPeriodo.appendChild(labelPerHasta);
+				this.groupPeriodo.appendChild(labelVto);
+
+				this.cuitCliente = document.createElement('input');
+				this.razonSocialCliente = document.createElement('input');
+				this.condFrenteIVACliente = document.createElement('input');
+				this.domicilioCliente = document.createElement('input');
+				this.condicionVenta = document.createElement('input');
+
+				var labelCuitCl = document.createElement('label');
+				labelCuitCl.textContent = 'CUIT:';
+				labelCuitCl.appendChild(this.cuitCliente);
+
+				var labelRazonCl = document.createElement('label');
+				labelRazonCl.textContent = 'Apellido y Nombre / Razon social:';
+				labelRazonCl.appendChild(this.razonSocialCliente);
+
+				var labelCondIVACl = document.createElement('label');
+				labelCondIVACl.textContent = 'Condicion frente al IVA:';
+				labelCondIVACl.appendChild(this.condFrenteIVACliente);
+
+				var labelDomCl = document.createElement('label');
+				labelDomCl.textContent = 'Domicilio:';
+				labelDomCl.appendChild(this.domicilioCliente);
+
+				var labelCondVtaCl = document.createElement('label');
+				labelCondVtaCl.textContent = 'Condicion de venta:';
+				labelCondVtaCl.appendChild(this.condicionVenta);
+
+				this.groupCliente = document.createElement('div');
+				this.groupCliente.className = 'group-cliente';
+				this.groupCliente.appendChild(labelCuitCl);
+				this.groupCliente.appendChild(labelRazonCl);
+				this.groupCliente.appendChild(labelCondIVACl);
+				this.groupCliente.appendChild(labelDomCl);
+				this.groupCliente.appendChild(labelCondVtaCl);
+
+				this.facturaDocument = document.createElement('div');
+				this.facturaDocument.className = 'factura-document';
+
+				var formatoFactura = document.createElement('table');
+				formatoFactura.className = 'factura-layout';
+				var ltBody = document.createElement('tbody');
+
+				var row1 = document.createElement('tr');
+				var cell11 = document.createElement('td');
+				cell11.appendChild(this.groupEmisor);
+				var cell12 = document.createElement('td');
+				cell12.appendChild(this.groupTipoFactura);
+				var cell13 = document.createElement('td');
+				cell13.rowSpan = 2;
+				cell13.appendChild(this.groupEmisorExtras);
+				row1.appendChild(cell11);
+				row1.appendChild(cell12);
+				row1.appendChild(cell13);
+				ltBody.appendChild(row1);
+
+				var row2 = document.createElement('tr');
+				var cell21 = document.createElement('td');
+				cell21.appendChild(this.groupCliente);
+				row2.appendChild(cell21);
+				ltBody.appendChild(row2);
+
+				var row3 = document.createElement('tr');
+				var cell31 = document.createElement('td');
+				cell31.colSpan = 2;
+				cell31.appendChild(this.groupPeriodo);
+				row3.appendChild(cell31);
+				ltBody.appendChild(row3);
+
+				formatoFactura.appendChild(ltBody);
+
+				this.btnAgregarArticulo = document.createElement('button');
+				this.btnAgregarArticulo.type = 'button';
+				this.btnAgregarArticulo.textContent = 'Agregar articulo';
+				this.onAgregarArticuloClick = this.agregarArticulo.bind(this);
+				this.onArticuloInputChange = this.actualizarImportes.bind(this);
+				formatoFactura.appendChild(this.btnAgregarArticulo);
+
+				this.groupArticulos = document.createElement('div');
+				this.groupArticulos.className = 'group-articulos';
+				this.groupArticulos.textContent = 'Articulos';
+				this.tablaArticulos = document.createElement('table');
+				this.tablaArticulos.className = 'factura-layout';
+				this.encabezadoArticulos = document.createElement('thead');
+				var filaEncabezado = document.createElement('tr');
+				['Descripcion', 'Cant.', 'Precio', 'Parcial'].forEach(function(titulo) {
+					var celda = document.createElement('th');
+					celda.textContent = titulo;
+					filaEncabezado.appendChild(celda);
+				});
+				this.encabezadoArticulos.appendChild(filaEncabezado);
+				this.bodyArticulos = document.createElement('tbody');
+				this.tablaArticulos.appendChild(this.encabezadoArticulos);
+				this.tablaArticulos.appendChild(this.bodyArticulos);
+				this.groupArticulos.appendChild(this.tablaArticulos);
+
+				this.groupTotal = document.createElement('div');
+				this.groupTotal.className = 'group-total';
+				this.totalLabel = document.createElement('div');
+				this.totalLabel.className = 'total-box';
+				this.totalLabel.textContent = 'TOTAL: 0.00';
+				this.groupTotal.appendChild(this.totalLabel);
+
+				this.facturaDocument.appendChild(formatoFactura);
+				this.facturaDocument.appendChild(this.groupArticulos);
+				this.facturaDocument.appendChild(this.groupTotal);
+
+				this.actions = document.createElement('div');
+				this.actions.className = 'factura-actions';
+
+				this.btnPdf = document.createElement('button');
+				this.btnPdf.type = 'button';
+				this.btnPdf.textContent = 'Descargar PDF';
+				
+				this.onPdfClick = this.renderizarPdf.bind(this);
+
+				this.actions.appendChild(this.btnPdf);
+				this.panel.appendChild(this.facturaDocument);
+				this.panel.appendChild(this.actions);
+				this.appendChild(this.panel);
+			}
+
+			connectedCallback() {
+				this.btnAgregarArticulo.addEventListener('click', this.onAgregarArticuloClick);
+				this.btnPdf.addEventListener('click', this.onPdfClick);
+			}
+
+			disconnectedCallback() {
+				this.btnAgregarArticulo.removeEventListener('click', this.onAgregarArticuloClick);
+				this.btnPdf.removeEventListener('click', this.onPdfClick);
+			}
+
+			agregarArticulo() {
+				const fila = document.createElement('tr');
+
+				const celdaDescripcion = document.createElement('td');
+				const inputDescripcion = document.createElement('input');
+				inputDescripcion.type = 'text';
+				inputDescripcion.placeholder = 'Descripcion';
+				celdaDescripcion.appendChild(inputDescripcion);
+
+				const celdaCantidad = document.createElement('td');
+				const inputCantidad = document.createElement('input');
+				inputCantidad.type = 'number';
+				inputCantidad.min = '0';
+				inputCantidad.step = '1';
+				inputCantidad.placeholder = 'Cant.';
+				inputCantidad.addEventListener('input', this.onArticuloInputChange);
+				celdaCantidad.appendChild(inputCantidad);
+
+				const celdaPrecio = document.createElement('td');
+				const inputPrecio = document.createElement('input');
+				inputPrecio.type = 'number';
+				inputPrecio.min = '0';
+				inputPrecio.step = '0.01';
+				inputPrecio.placeholder = 'Precio';
+				inputPrecio.addEventListener('input', this.onArticuloInputChange);
+				celdaPrecio.appendChild(inputPrecio);
+
+				const celdaImporte = document.createElement('td');
+				celdaImporte.className = 'subtotal-articulo';
+				celdaImporte.textContent = '0.00';
+
+				fila.appendChild(celdaDescripcion);
+				fila.appendChild(celdaCantidad);
+				fila.appendChild(celdaPrecio);
+				fila.appendChild(celdaImporte);
+				this.bodyArticulos.appendChild(fila);
+				this.actualizarImportes();
+			}
+
+			actualizarImportes() {
+				let total = 0;
+
+				Array.from(this.bodyArticulos.querySelectorAll('tr')).forEach((fila) => {
+					const inputCantidad = fila.querySelector('td:nth-child(2) input');
+					const inputPrecio = fila.querySelector('td:nth-child(3) input');
+					const celdaImporte = fila.querySelector('.subtotal-articulo');
+
+					if (!inputCantidad || !inputPrecio || !celdaImporte) {
+						return;
+					}
+
+					const cantidad = parseFloat(inputCantidad.value) || 0;
+					const precio = parseFloat(inputPrecio.value) || 0;
+					const subtotal = cantidad * precio;
+
+					celdaImporte.textContent = subtotal.toFixed(2);
+					total += subtotal;
+				});
+
+				this.totalLabel.textContent = 'TOTAL: ' + total.toFixed(2);
+			}
+
+			renderizarPdf() {
+				const opciones = {
+					margin: 10,
+					filename: 'factura-afip.pdf',
+					image: { type: 'jpeg', quality: 0.98 },
+					html2canvas: { scale: 2, useCORS: true },
+					jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+				};
+
+				html2pdf().set(opciones).from(this.facturaDocument).save();
+			}
+		}
+
+		customElements.define('x-formulario', Formulario);
+
+		function main() {
+			const formulario = new Formulario();
+			document.body.appendChild(formulario);
+		}
+
+		window.onload = main;
+	</script>
+</head>
+<body>
+</body>
+</html>
